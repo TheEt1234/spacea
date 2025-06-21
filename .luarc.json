@@ -1,0 +1,10 @@
+{
+    "diagnostic.disable":[],
+    "docScriptPath":"", 
+    "format.enable":false,
+    "runtime.version":"LuaJIT",
+    "type.checkTableShape":true,
+    "type.inferParamType":true,
+    "workspace.ignoreSubmodules":false,
+    "workspace.library": ["dev/lsp_definitions/luanti-lls-definitions/library", "dev/lsp_definitions/custom"]
+}
