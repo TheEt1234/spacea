@@ -5,5 +5,5 @@ indent_type = "Spaces" # Can switch this later if anyone needs tabs for accessib
 indent_width = 4
 quote_style = "AutoPreferSingle"
 call_parentheses = "None"
-collapse_simple_statement = "ConditionalOnly" # I find this really annoying on functions
+collapse_simple_statement = "Always" # I find this really annoying on functions
 space_after_function_names = "Never"

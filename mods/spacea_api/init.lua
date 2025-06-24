@@ -2,7 +2,7 @@
 
 --- Short for "spacea"
 --- You will need this a LOT trust me
----@type table
+---@class Spacea
 ---@diagnostic disable-next-line: lowercase-global
 s = {}
 
@@ -18,4 +18,12 @@ s.load_file 'utils'
 s.load_files {
     'version',
     'polyfill',
+    'functional',
+    'misc',
+    'data_structures/init',
+    'node_related',
+    'custom_falling',
+    'arm',
 }
+
+if s.version.is_dev then s.load_file 'strict' end

@@ -1,6 +1,7 @@
 --- equivalent to an *ipairs* loop
----@param t table<integer, any> array
----@param f fun(v: any, i: integer)
+---@generic T
+---@param t T[]
+---@param f fun(v: T, i: integer)
 function s.foreach(t, f)
     for i, v in ipairs(t) do
         f(v, i)
@@ -18,14 +19,10 @@ function s.foreachp(t, f)
 end
 
 ---@param paths string[]
-function s.load_files(paths)
-    s.foreach(paths, s.load_file)
-end
+function s.load_files(paths) s.foreach(paths, s.load_file) end
 
 ---@nodiscard
 ---@param str1 string
 ---@param str2 string
 ---@return boolean
-function string.starts_with(str1, str2)
-    return string.sub(str1, #str2) == str2
-end
+function string.starts_with(str1, str2) return string.sub(str1, #str2) == str2 end

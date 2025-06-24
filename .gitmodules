@@ -1,3 +1,6 @@
 [submodule "dev/lsp_definitions/luanti-lls-definitions"]
 	path = dev/lsp_definitions/luanti-lls-definitions
 	url = https://git.sr.ht/~fgaz/luanti-lls-definitions
+[submodule "mods/hudbars"]
+	path = mods/hudbars
+	url = https://codeberg.org/Wuzzy/minetest_hudbars
