@@ -24,6 +24,7 @@ s.load_files {
     'node_related',
     'custom_falling',
     'arm',
+    'settings',
 }
 
 if s.version.is_dev then s.load_file 'strict' end

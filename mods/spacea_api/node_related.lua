@@ -1,4 +1,4 @@
----@param pos vector.Vector
+---@param pos vector
 function s.get_or_load_node(pos)
     local node = core.get_node_or_nil(pos)
     if node == nil then

@@ -24,12 +24,16 @@ local c_glowy_cloud_piece = core.get_content_id 'spacea_mapgen:cloud_piece_glowy
 
 --- Mapgen is a write-only language to express in an esoteric way how you want an entire infinite world to be created
 --- I feel like?
---- Can YOU read this?
-core.register_on_generated(function(vm, minp, maxp, blockseed)
+--- Can you read other people's mapgens?
+---@param vm VoxelManip
+---@param minp vector
+---@param maxp vector
+---@diagnostic disable-next-line: undefined-field
+core.regster_on_generated(function(vm, minp, maxp, _)
     local t0 = os.clock()
     vm:get_data(data)
     local emin, emax = vm:get_emerged_area()
-    local area = VoxelArea:new { MinEdge = emin, MaxEdge = emax } -- emax? emacs? wtf, i'm using neovim
+    local area = VoxelArea:new { MinEdge = emin, MaxEdge = emax }
 
     local sidelen = maxp.x - minp.x + 1
     local sidelen_vec = { x = sidelen, y = sidelen, z = sidelen }

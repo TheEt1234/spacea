@@ -40,13 +40,13 @@ s.mapgen.noises = {
 }
 core.ipc_set('spacea_mapgen:noises', s.mapgen.noises)
 
-local rand = PcgRandom(core.get_mapgen_setting 'seed')
+local rand = PcgRandom(tonumber(core.get_mapgen_setting 'seed') --[[@as integer]])
 
 -- TODO: RESPAWN POINTS (like /home)
 
 local max_attempts, max_y_look = 200, 200
 
----@param player_ref core.Player
+---@param player_ref PlayerRef
 ---@param attempts integer?
 ---@return boolean?
 function s.player.respawn_player(player_ref, attempts)

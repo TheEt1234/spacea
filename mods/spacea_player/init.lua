@@ -2,7 +2,7 @@ s.player = {}
 s.load_files {
     'data',
     'physics',
-    'misc',
+    'skybox',
     'hud',
     'armor',
 }
