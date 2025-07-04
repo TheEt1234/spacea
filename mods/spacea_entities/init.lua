@@ -1,5 +1,5 @@
 ---@class Spacea.Entities
 s.entities = {}
 s.load_files {
-    'misc_getters',
+    'misc_getters.lua',
 }

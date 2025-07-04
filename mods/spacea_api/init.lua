@@ -8,23 +8,21 @@ s = {}
 
 --- Loads the path of <mod dir>/<path>.lua
 ---@param path string Without .lua file extension
-function s.load_file(path)
-    dofile(core.get_modpath(core.get_current_modname()) .. '/' .. path .. '.lua')
-end
+function s.load_file(path) dofile(core.get_modpath(core.get_current_modname()) .. '/' .. path) end
 
-s.load_file 'utils'
+s.load_file 'utils.lua'
 
 -- utils gives access to load_files
 s.load_files {
-    'version',
-    'polyfill',
-    'functional',
-    'misc',
-    'data_structures/init',
-    'node_related',
-    'custom_falling',
-    'arm',
-    'settings',
+    'version.lua',
+    'polyfill.lua',
+    'functional.lua',
+    'misc.lua',
+    'data_structures/init.lua',
+    'node_related.lua',
+    'custom_falling.lua',
+    'arm.lua',
+    'settings.lua',
 }
 
-if s.version.is_dev then s.load_file 'strict' end
+if s.version.is_dev then s.load_file 'strict.lua' end

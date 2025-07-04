@@ -29,7 +29,7 @@ local c_glowy_cloud_piece = core.get_content_id 'spacea_mapgen:cloud_piece_glowy
 ---@param minp vector
 ---@param maxp vector
 ---@diagnostic disable-next-line: undefined-field
-core.regster_on_generated(function(vm, minp, maxp, _)
+core.register_on_generated(function(vm, minp, maxp, _)
     local t0 = os.clock()
     vm:get_data(data)
     local emin, emax = vm:get_emerged_area()

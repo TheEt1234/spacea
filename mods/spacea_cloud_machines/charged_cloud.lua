@@ -31,6 +31,7 @@ core.register_node('spacea_cloud_machines:charged_cloud', {
 
         local face = vector.subtract(pointed_thing.above, pointed_thing.under)
 
+        ---@return vector
         local function transform_face(face_vec, add, shift)
             local ret_vec = vector.copy(face_vec)
             for _, v in pairs { 'x', 'y', 'z' } do -- The worst way to iterate over a vector... ?
@@ -54,6 +55,8 @@ core.register_node('spacea_cloud_machines:charged_cloud', {
         }
 
         local puncher_pos = s.entities.get_eyepos(puncher)
+        local above_pos = pointed_thing.above
+        local vel_shift = vector.subtract(puncher_pos, above_pos)
 
         core.add_particlespawner {
             time = 0.1,

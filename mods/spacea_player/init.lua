@@ -1,8 +1,8 @@
 s.player = {}
 s.load_files {
-    'data',
-    'physics',
-    'skybox',
-    'hud',
-    'armor',
+    'data.lua',
+    'physics.lua',
+    'skybox.lua',
+    'hud.lua',
+    'armor.lua',
 }

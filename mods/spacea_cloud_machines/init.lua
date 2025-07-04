@@ -1,3 +1,3 @@
 s.load_files {
-    'charged_cloud',
+    'charged_cloud.lua',
 }
