@@ -1,5 +1,5 @@
 local light_max = 3 / 14
-local light_min = 1.8 / 14
+local light_min = 3 / 14
 local light_per_second = 0.01 / 14
 
 local current_light = 3 / 14

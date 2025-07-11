@@ -68,7 +68,7 @@ core.register_node('spacea_mapgen:cloud_piece_light', {
         local item = puncher:get_wielded_item()
         if item:get_name() ~= 'spacea_mapgen:cloud_piece_glowy' then return end
 
-        core.set_node(pos, { name = 'spacea_cloud_machines:charged_cloud' })
+        core.set_node(pos, { name = 'spacea_cloud_machines:charged_cloud_1' })
         core.add_particlespawner {
             time = 0.01,
             amount = 300,

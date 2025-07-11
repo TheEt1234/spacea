@@ -4,3 +4,6 @@
 [submodule "mods/hudbars"]
 	path = mods/hudbars
 	url = https://codeberg.org/Wuzzy/minetest_hudbars
+[submodule "dev/lsp_definitions/luanti"]
+	path = dev/lsp_definitions/luanti
+	url = git@github.com:TheEt1234/luanti_lsp_definitions.git
