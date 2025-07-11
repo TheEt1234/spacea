@@ -31,7 +31,7 @@ boolean?
 
 
 ```lua
-number?
+number
 ```
 
  Probability of triggering `action` per-node per-interval is 1.0 / chance (integers only)
@@ -40,7 +40,7 @@ number?
 
 
 ```lua
-number?
+number
 ```
 
  Operation interval in seconds
@@ -49,7 +49,7 @@ number?
 
 
 ```lua
-string?
+string
 ```
 
  Descriptive label for profiling purposes (optional).
@@ -85,7 +85,7 @@ string[]?
 
 
 ```lua
-string[]?
+string[]
 ```
 
  Apply `action` function to these nodes.
@@ -1312,7 +1312,7 @@ integer?
 
 
 ```lua
-fun(self: luaentity)
+fun(self: any)?
 ```
 
 ## initial_properties
@@ -1322,80 +1322,25 @@ fun(self: luaentity)
 ObjectProps
 ```
 
-## name
-
-
-```lua
-string
-```
-
-## object
-
-
-```lua
-ObjectRef
-```
-
- `ObjectRef`
- -----------
-
- Moving things in the game are generally these.
- This is basically a reference to a C++ `ServerActiveObject`.
-
- ### Advice on handling `ObjectRefs`
-
- When you receive an `ObjectRef` as a callback argument or from another API
- function, it is possible to store the reference somewhere and keep it around.
- It will keep functioning until the object is unloaded or removed.
-
- However, doing this is **NOT** recommended - `ObjectRefs` should be "let go"
- of as soon as control is returned from Lua back to the engine.
-
- Doing so is much less error-prone and you will never need to wonder if the
- object you are working with still exists.
-
- If this is not feasible, you can test whether an `ObjectRef` is still valid
- via `object:is_valid()`.
-
- Getters may be called for invalid objects and will return nothing then.
- All other methods should not be called on invalid objects.
-
- ### Attachments
-
- It is possible to attach objects to other objects (`set_attach` method).
-
- When an object is attached, it is positioned relative to the parent's position
- and rotation. `get_pos` and `get_rotation` will always return the parent's
- values and changes via their setter counterparts are ignored.
-
- To change position or rotation call `set_attach` again with the new values.
-
- **Note**: Just like model dimensions, the relative position in `set_attach`
- must be multiplied by 10 compared to world positions.
-
- It is also possible to attach to a bone of the parent object. In that case the
- child will follow movement and rotation of that bone.
-
-
 ## on_activate
 
 
 ```lua
-fun(self: luaentity, staticdata: string, dtime_s: number)
+fun(self: any, staticdata: string, dtime_s: number)?
 ```
 
 ## on_attach_child
 
 
 ```lua
-fun(self: luaentity, child: ObjectRef)
+fun(self: any, child: ObjectRef)?
 ```
 
 ## on_deactivate
 
 
 ```lua
-fun(self: luaentity, removal: boolean)
+fun(self: any, removal: boolean)?
 ```
 
  * `on_deactivate(self, removal)`
@@ -1411,42 +1356,51 @@ fun(self: luaentity, removal: boolean)
 
 
 ```lua
-fun(self: luaentity, killer?: ObjectRef)
+fun(self: any, killer?: ObjectRef)?
 ```
 
 ## on_detach
 
 
 ```lua
-fun(self: luaentity, parent: ObjectRef)
+fun(self: any, parent: ObjectRef)?
 ```
 
 ## on_detach_child
 
 
 ```lua
-fun(self: luaentity, child: ObjectRef)
+fun(self: any, child: ObjectRef)?
 ```
 
 ## on_punch
 
 
 ```lua
-fun(self: luaentity, puncher?: ObjectRef, time_from_last_punch?: number, tool_capabilities?: tool_capabilities, dir: vector, damage: number):boolean
+fun(self: any, puncher?: ObjectRef, time_from_last_punch?: number, tool_capabilities?: tool_capabilities, dir: vector, damage: number):boolean??
 ```
+
+ Called when somebody punches the object.
+ Note that you probably want to handle most punches using the automatic armor group system.
+ puncher: an ObjectRef (can be nil)
+ time_from_last_punch: Meant for disallowing spamming of clicks (can be nil).
+ tool_capabilities: capability table of used item (can be nil)
+ dir: unit vector of direction of punch. Always defined. Points from the puncher to the punched.
+ damage: damage that will be done to entity.
+ Can return true to prevent the default damage mechanism.
 
 ## on_rightclick
 
 
 ```lua
-fun(self: luaentity, clicker: ObjectRef)
+fun(self: any, clicker: ObjectRef)?
 ```
 
 ## on_step
 
 
 ```lua
-fun(self: luaentity, dtime: number, moveresult: moveresult)
+fun(self: any, dtime: number, moveresult: moveresult)?
 ```
 
 
@@ -1791,7 +1745,7 @@ number
 
 
 ```lua
-fun(listname: string, stack: string|table|ItemStack)
+fun(self: any, listname: string, stack: string|table|ItemStack)
 ```
 
  * `add_item(listname, stack)`: add item somewhere in list, returns leftover
@@ -1801,7 +1755,7 @@ fun(listname: string, stack: string|table|ItemStack)
 
 
 ```lua
-fun(listname: string, stack: string|table|ItemStack, match_meta?: boolean)
+fun(self: any, listname: string, stack: string|table|ItemStack, match_meta?: boolean)
 ```
 
  * `contains_item(listname, stack, [match_meta])`: returns `true` if
@@ -1814,7 +1768,7 @@ fun(listname: string, stack: string|table|ItemStack, match_meta?: boolean)
 
 
 ```lua
-fun(listname: string):ItemStack[]
+fun(self: any, listname: string):ItemStack[]
 ```
 
  * `get_list(listname)`: returns full list (list of `ItemStack`s)
@@ -1824,7 +1778,7 @@ fun(listname: string):ItemStack[]
 
 
 ```lua
-fun():table<string, ItemStack[]>
+fun(self: any):table<string, ItemStack[]>
 ```
 
  * `get_lists()`: returns table that maps listnames to inventory lists
@@ -1833,7 +1787,7 @@ fun():table<string, ItemStack[]>
 
 
 ```lua
-fun():inventory_location
+fun(self: any):inventory_location
 ```
 
  * `get_location()`: returns a location compatible to
@@ -1844,7 +1798,7 @@ fun():inventory_location
 
 
 ```lua
-fun(listname: string):number
+fun(self: any, listname: string):number
 ```
 
  * `get_size(listname)`: get size of a list
@@ -1853,7 +1807,7 @@ fun(listname: string):number
 
 
 ```lua
-fun(listname: string, i: integer)
+fun(self: any, listname: string, i: integer)
 ```
 
  * `get_stack(listname, i)`: get a copy of stack index `i` in list
@@ -1862,7 +1816,7 @@ fun(listname: string, i: integer)
 
 
 ```lua
-fun(listname: string):integer
+fun(self: any, listname: string):integer
 ```
 
  * `get_width(listname)`: get width of a list
@@ -1871,7 +1825,7 @@ fun(listname: string):integer
 
 
 ```lua
-fun(listname: string):boolean
+fun(self: any, listname: string):boolean
 ```
 
  * `is_empty(listname)`: return `true` if list is empty
@@ -1880,7 +1834,7 @@ fun(listname: string):boolean
 
 
 ```lua
-fun(listname: string, stack: string|table|ItemStack, match_meta?: boolean)
+fun(self: any, listname: string, stack: string|table|ItemStack, match_meta?: boolean)
 ```
 
  * `remove_item(listname, stack, [match_meta])`: take as many items as specified from the
@@ -1894,7 +1848,7 @@ fun(listname: string, stack: string|table|ItemStack, match_meta?: boolean)
 
 
 ```lua
-fun(listname: string, stack: string|table|ItemStack):boolean
+fun(self: any, listname: string, stack: string|table|ItemStack):boolean
 ```
 
  * `room_for_item(listname, stack):` returns `true` if the stack of items
@@ -1904,7 +1858,7 @@ fun(listname: string, stack: string|table|ItemStack):boolean
 
 
 ```lua
-fun(listname: string, list: ItemStack[])
+fun(self: any, listname: string, list: ItemStack[])
 ```
 
  * `set_list(listname, list)`: set full list (size will not change)
@@ -1913,7 +1867,7 @@ fun(listname: string, list: ItemStack[])
 
 
 ```lua
-fun(lists: table<string, ItemStack[]>)
+fun(self: any, lists: table<string, ItemStack[]>)
 ```
 
  * `set_lists(lists)`: sets inventory lists (size will not change)
@@ -1922,7 +1876,7 @@ fun(lists: table<string, ItemStack[]>)
 
 
 ```lua
-fun(listname: string, size: integer):boolean
+fun(self: any, listname: string, size: integer):boolean
 ```
 
  * `set_size(listname, size)`: set size of a list
@@ -1934,7 +1888,7 @@ fun(listname: string, size: integer):boolean
 
 
 ```lua
-fun(listname: string, i: integer, stack: string|table|ItemStack)
+fun(self: any, listname: string, i: integer, stack: string|table|ItemStack)
 ```
 
  * `set_stack(listname, i, stack)`: copy `stack` to index `i` in list
@@ -1943,7 +1897,7 @@ fun(listname: string, i: integer, stack: string|table|ItemStack)
 
 
 ```lua
-fun(listname: string, width: integer)
+fun(self: any, listname: string, width: integer)
 ```
 
  * `set_width(listname, width)`: set width of list; currently used for crafting
@@ -2167,7 +2121,7 @@ string?
 
 
 ```lua
-{ nodes: table<string, boolean|"blocking">, objects: table<string, boolean|"blocking"> }
+{ nodes: table<string, boolean|"blocking">, objects: table<string, boolean|"blocking"> }?
 ```
 
  Contains lists to override the `pointable` property of nodes and objects.
@@ -2207,7 +2161,7 @@ string?
 
 
 ```lua
-{ breaks: SimpleSoundSpec?, eat: SimpleSoundSpec?, punch_use: SimpleSoundSpec?, punch_use_dir: SimpleSoundSpec? }
+{ breaks: SimpleSoundSpec?, eat: SimpleSoundSpec?, punch_use: SimpleSoundSpec?, punch_use_dir: SimpleSoundSpec? }?
 ```
 
 ## stack_max
@@ -2233,7 +2187,7 @@ tool_capabilities?
 
 
 ```lua
-"long_dig_short_place"|"short_dig_long_place"|"user"|{ pointed_nothing: "long_dig_short_place"|"short_dig_long_place"|"user", pointed_node: "long_dig_short_place"|"short_dig_long_place"|"user", pointed_object: "long_dig_short_place"|"short_dig_long_place"|"user" }
+("long_dig_short_place"|"short_dig_long_place"|"user"|{ pointed_nothing: "long_dig_short_place"|"short_dig_long_place"|"user", pointed_node: "long_dig_short_place"|"short_dig_long_place"|"user", pointed_object: "long_dig_short_place"|"short_dig_long_place"|"user" })?
 ```
 
  Only affects touchscreen clients.
@@ -2297,11 +2251,22 @@ vector?
 
 # ItemStack
 
+
+```lua
+function ItemStack(any: string|table|ItemStack)
+  -> ItemStack
+```
+
+
+---
+
+# ItemStack
+
 ## add_item
 
 
 ```lua
-fun(item: string|table|ItemStack)
+fun(self: any, item: string|table|ItemStack)
 ```
 
  * `add_item(item)`: returns leftover `ItemStack`
@@ -2311,7 +2276,7 @@ fun(item: string|table|ItemStack)
 
 
 ```lua
-fun(amount: integer)
+fun(self: any, amount: integer)
 ```
 
  * `add_wear(amount)`
@@ -2323,11 +2288,11 @@ fun(amount: integer)
 
 
 ```lua
-fun(max_uses: integer)
+fun(self: any, max_uses: integer)
 ```
 
  * `add_wear_by_uses(max_uses)`
-     * Increases wear in such a way that, if only this function is called,
+     * Increases wear in such a way that, if only this function iself,s called,
        the item breaks after `max_uses` times
      * Valid `max_uses` range is [0,65536]
      * Does nothing if item is not a tool or if `max_uses` is 0
@@ -2336,7 +2301,7 @@ fun(max_uses: integer)
 
 
 ```lua
-fun()
+fun(self: any)
 ```
 
  * `clear()`: removes all items from the stack, making it empty.
@@ -2345,7 +2310,7 @@ fun()
 
 
 ```lua
-fun(other: any):boolean
+fun(self: any, other: any):boolean
 ```
 
  * `equals(other)`:
@@ -2360,7 +2325,7 @@ fun(other: any):boolean
 
 
 ```lua
-fun():integer
+fun(self: any):integer
 ```
 
  * `get_count()`: Returns number of items on the stack.
@@ -2369,7 +2334,7 @@ fun():integer
 
 
 ```lua
-fun():ItemDef
+fun(self: any):ItemDef
 ```
 
  * `get_definition()`: returns the item definition table.
@@ -2378,7 +2343,7 @@ fun():ItemDef
 
 
 ```lua
-fun():string
+fun(self: any):string
 ```
 
  * `get_description()`: returns the description shown in inventory list tooltips.
@@ -2392,7 +2357,7 @@ fun():string
 
 
 ```lua
-fun():integer
+fun(self: any):integer
 ```
 
  * `get_free_space()`: returns `get_stack_max() - get_count()`.
@@ -2401,7 +2366,7 @@ fun():integer
 
 
 ```lua
-fun():ItemStackMetaRef
+fun(self: any):ItemStackMetaRef
 ```
 
  * `get_meta()`: returns ItemStackMetaRef. See section for more details
@@ -2410,7 +2375,7 @@ fun():ItemStackMetaRef
 
 
 ```lua
-fun():string
+fun(self: any):string
 ```
 
  * `get_name()`: returns item name (e.g. `"default:stone"`).
@@ -2419,7 +2384,7 @@ fun():string
 
 
 ```lua
-fun():string
+fun(self: any):string
 ```
 
  * `get_short_description()`: returns the short description or nil.
@@ -2434,7 +2399,7 @@ fun():string
 
 
 ```lua
-fun():integer
+fun(self: any):integer
 ```
 
  * `get_stack_max()`: returns the maximum size of the stack (depends on the
@@ -2444,7 +2409,7 @@ fun():integer
 
 
 ```lua
-fun():tool_capabilities
+fun(self: any):tool_capabilities
 ```
 
  * `get_tool_capabilities()`: returns the digging properties of the item,
@@ -2454,7 +2419,7 @@ fun():tool_capabilities
 
 
 ```lua
-fun():integer
+fun(self: any):integer
 ```
 
  * `get_wear()`: returns tool wear (`0`-`65535`), `0` for non-tools.
@@ -2463,7 +2428,7 @@ fun():integer
 
 
 ```lua
-fun():wear_bar_params?
+fun(self: any):wear_bar_params?
 ```
 
  * `get_wear_bar_params()`: returns the wear bar parameters of the item,
@@ -2473,7 +2438,7 @@ fun():wear_bar_params?
 
 
 ```lua
-fun():boolean
+fun(self: any):boolean
 ```
 
  * `is_empty()`: returns `true` if stack is empty.
@@ -2482,7 +2447,7 @@ fun():boolean
 
 
 ```lua
-fun():boolean
+fun(self: any):boolean
 ```
 
  * `is_known()`: returns `true` if the item name refers to a defined item type.
@@ -2491,7 +2456,7 @@ fun():boolean
 
 
 ```lua
-fun(item: string|table|ItemStack):boolean
+fun(self: any, item: string|table|ItemStack):boolean
 ```
 
  * `item_fits(item)`: returns `true` if item or stack can be fully added to
@@ -2501,7 +2466,7 @@ fun(item: string|table|ItemStack):boolean
 
 
 ```lua
-fun(n: integer):ItemStack
+fun(self: any, n: integer):ItemStack
 ```
 
  * `peek_item(n)`: returns taken `ItemStack`
@@ -2512,7 +2477,7 @@ fun(n: integer):ItemStack
 
 
 ```lua
-fun(item: string|table|ItemStack)
+fun(self: any, item: string|table|ItemStack)
 ```
 
  * `replace(item)`: replace the contents of this stack.
@@ -2522,7 +2487,7 @@ fun(item: string|table|ItemStack)
 
 
 ```lua
-fun(count: integer):boolean
+fun(self: any, count: integer):boolean
 ```
 
  * `set_count(count)`: returns a boolean indicating whether the item was cleared
@@ -2532,7 +2497,7 @@ fun(count: integer):boolean
 
 
 ```lua
-fun(item_name: string):boolean
+fun(self: any, item_name: string):boolean
 ```
 
  * `set_name(item_name)`: returns a boolean indicating whether the item was
@@ -2542,7 +2507,7 @@ fun(item_name: string):boolean
 
 
 ```lua
-fun(wear: integer):boolean
+fun(self: any, wear: integer):boolean
 ```
 
  * `set_wear(wear)`: returns boolean indicating whether item was cleared
@@ -2552,7 +2517,7 @@ fun(wear: integer):boolean
 
 
 ```lua
-fun(n: integer):ItemStack
+fun(self: any, n: integer):ItemStack
 ```
 
  * `take_item(n)`: returns taken `ItemStack`
@@ -2563,7 +2528,7 @@ fun(n: integer):ItemStack
 
 
 ```lua
-fun():string
+fun(self: any):string
 ```
 
  * `to_string()`: returns the stack in itemstring form.
@@ -2572,7 +2537,7 @@ fun():string
 
 
 ```lua
-fun():table
+fun(self: any):table
 ```
 
  * `to_table()`: returns the stack in Lua table form.
@@ -2664,14 +2629,14 @@ fun(key: string, value: string)
 
 
 ```lua
-fun(tool_capabilities?: tool_capabilities)
+fun(self: any, tool_capabilities?: tool_capabilities)
 ```
 
 ## set_wear_bar_params
 
 
 ```lua
-fun(wear_bar_params?: wear_bar_params)
+fun(self: any, wear_bar_params?: wear_bar_params)
 ```
 
 ## to_table
@@ -2892,7 +2857,7 @@ fun(self: any, bone: string):vector
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -2902,7 +2867,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):{ mode: "any"|"first"|"third"|"third_front" }?
+fun(self: any):{ mode: "any"|"first"|"third"|"third_front" }
 ```
 
  Player only
@@ -2933,7 +2898,7 @@ fun(self: any):table
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -2956,7 +2921,7 @@ fun(self: any):table<string, boolean>
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  Luaentity only
@@ -2968,7 +2933,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):vector?, vector?, vector?
+fun(self: any):vector?, vector?, vector
 ```
 
  Player only
@@ -2978,7 +2943,7 @@ fun(self: any):vector?, vector?, vector?
 
 
 ```lua
-fun(self: any):{ breathing: boolean, drowning: boolean, node_damage: boolean }?
+fun(self: any):{ breathing: boolean, drowning: boolean, node_damage: boolean }
 ```
 
  Player only
@@ -3023,7 +2988,7 @@ fun(self: any):number
 
 
 ```lua
-fun(self: any):InvRef?
+fun(self: any):InvRef
 ```
 
  * `get_inventory()`: returns an `InvRef` for players, otherwise returns `nil`
@@ -3065,7 +3030,7 @@ fun(self: any):table?, table?, table?, table?, table?
 
 
 ```lua
-fun(self: any):vector?
+fun(self: any):vector
 ```
 
  Player only
@@ -3075,7 +3040,7 @@ fun(self: any):vector?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -3086,7 +3051,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -3099,7 +3064,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -3111,7 +3076,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -3123,7 +3088,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):luaentity?
+fun(self: any):luaentity
 ```
 
  * `get_luaentity()`:
@@ -3144,7 +3109,7 @@ fun(self: any):PlayerMetaRef
 
 
 ```lua
-fun(self: any):table?
+fun(self: any):table
 ```
 
  Player only
@@ -3240,7 +3205,7 @@ fun(self: any):number
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  * `get_player_name()`: Returns player name or `""` if is not a player
@@ -3250,7 +3215,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):vector?
+fun(self: any):vector
 ```
 
  Player only
@@ -3288,7 +3253,7 @@ fun(self: any):vector?
 
 
 ```lua
-fun(self: any, as_table: boolean):table?
+fun(self: any, as_table: boolean):table
 ```
 
  Player only
@@ -3303,7 +3268,7 @@ fun(self: any, as_table: boolean):table?
 
 
 ```lua
-fun(self: any):table?
+fun(self: any):table
 ```
 
  Player only
@@ -3314,7 +3279,7 @@ fun(self: any):table?
 
 
 ```lua
-fun(self: any):table?
+fun(self: any):table
 ```
 
  Player only
@@ -3343,7 +3308,7 @@ fun(self: any):vector
 
 
 ```lua
-fun(self: any):integer?
+fun(self: any):integer
 ```
 
  * `get_wield_index()`: returns the wield list index of the wielded item (starting with 1)
@@ -3352,7 +3317,7 @@ fun(self: any):integer?
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  * `get_wield_list()`: returns the name of the inventory list the wielded item
@@ -3362,7 +3327,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):ItemStack?
+fun(self: any):ItemStack
 ```
 
  * `get_wielded_item()`: returns a copy of the wielded item as an `ItemStack`
@@ -3438,7 +3403,7 @@ fun(self: any):{ hotbar: boolean?, healthbar: boolean?, crosshair: boolean?, wie
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  Player only
@@ -3448,7 +3413,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):integer?
+fun(self: any):integer
 ```
 
  Player only
@@ -3459,7 +3424,7 @@ fun(self: any):integer?
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  Player only
@@ -4429,7 +4394,7 @@ fun(self: any, vel: vector)
 
 
 ```lua
-fun(self: any, item: ItemStack):boolean?
+fun(self: any, item: ItemStack):boolean
 ```
 
  * `set_wielded_item(item)`: replaces the wielded item, returns `true` if
@@ -4594,91 +4559,91 @@ fun(message: string)
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## connect_front
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## connect_right
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## connect_top
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## disconnected
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## disconnected_back
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## disconnected_bottom
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## disconnected_front
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## disconnected_left
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## disconnected_right
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## disconnected_sides
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## disconnected_top
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## fixed
 
 
 ```lua
-number[]|number[][]
+(number[]|number[][])?
 ```
 
 ## type
@@ -4743,21 +4708,21 @@ number[]|number[][]
 
 
 ```lua
-number[]
+number[]?
 ```
 
 ## wall_side
 
 
 ```lua
-number[]
+number[]?
 ```
 
 ## wall_top
 
 
 ```lua
-number[]
+number[]?
 ```
 
 
@@ -5925,7 +5890,7 @@ integer?
 
 
 ```lua
-{ nodes: table<string, boolean|"blocking">, objects: table<string, boolean|"blocking"> }
+{ nodes: table<string, boolean|"blocking">, objects: table<string, boolean|"blocking"> }?
 ```
 
  Contains lists to override the `pointable` property of nodes and objects.
@@ -6034,7 +5999,7 @@ string?
 
 
 ```lua
-{ breaks: SimpleSoundSpec?, eat: SimpleSoundSpec?, punch_use: SimpleSoundSpec?, punch_use_dir: SimpleSoundSpec? }
+{ breaks: SimpleSoundSpec?, eat: SimpleSoundSpec?, punch_use: SimpleSoundSpec?, punch_use_dir: SimpleSoundSpec? }?
 ```
 
 ## sounds
@@ -6135,7 +6100,7 @@ tool_capabilities?
 
 
 ```lua
-"long_dig_short_place"|"short_dig_long_place"|"user"|{ pointed_nothing: "long_dig_short_place"|"short_dig_long_place"|"user", pointed_node: "long_dig_short_place"|"short_dig_long_place"|"user", pointed_object: "long_dig_short_place"|"short_dig_long_place"|"user" }
+("long_dig_short_place"|"short_dig_long_place"|"user"|{ pointed_nothing: "long_dig_short_place"|"short_dig_long_place"|"user", pointed_node: "long_dig_short_place"|"short_dig_long_place"|"user", pointed_object: "long_dig_short_place"|"short_dig_long_place"|"user" })?
 ```
 
  Only affects touchscreen clients.
@@ -6390,28 +6355,28 @@ fun():{ fields: table<string, string>, inventory: InvTable }
 
 
 ```lua
-fun():number
+fun(self: any):number
 ```
 
 ## get_timeout
 
 
 ```lua
-fun():number
+fun(self: any):number
 ```
 
 ## is_started
 
 
 ```lua
-fun():boolean
+fun(self: any):boolean
 ```
 
 ## set
 
 
 ```lua
-fun(timeout: number, elapsed: number)
+fun(self: any, timeout: number, elapsed: number)
 ```
 
  * `set(timeout,elapsed)`
@@ -6425,14 +6390,14 @@ fun(timeout: number, elapsed: number)
 
 
 ```lua
-fun(timeout: number)
+fun(self: any, timeout: number)
 ```
 
 ## stop
 
 
 ```lua
-fun()
+fun(self: any)
 ```
 
 
@@ -7094,7 +7059,7 @@ fun(self: any, bone: string):vector
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -7104,7 +7069,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):{ mode: "any"|"first"|"third"|"third_front" }?
+fun(self: any):{ mode: "any"|"first"|"third"|"third_front" }
 ```
 
  Player only
@@ -7135,7 +7100,7 @@ fun(self: any):table
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -7158,7 +7123,7 @@ fun(self: any):table<string, boolean>
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  Luaentity only
@@ -7170,7 +7135,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):vector?, vector?, vector?
+fun(self: any):vector?, vector?, vector
 ```
 
  Player only
@@ -7180,7 +7145,7 @@ fun(self: any):vector?, vector?, vector?
 
 
 ```lua
-fun(self: any):{ breathing: boolean, drowning: boolean, node_damage: boolean }?
+fun(self: any):{ breathing: boolean, drowning: boolean, node_damage: boolean }
 ```
 
  Player only
@@ -7225,7 +7190,7 @@ fun(self: any):number
 
 
 ```lua
-fun(self: any):InvRef?
+fun(self: any):InvRef
 ```
 
  * `get_inventory()`: returns an `InvRef` for players, otherwise returns `nil`
@@ -7267,7 +7232,7 @@ fun(self: any):table?, table?, table?, table?, table?
 
 
 ```lua
-fun(self: any):vector?
+fun(self: any):vector
 ```
 
  Player only
@@ -7277,7 +7242,7 @@ fun(self: any):vector?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -7288,7 +7253,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -7301,7 +7266,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -7313,7 +7278,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -7325,7 +7290,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):luaentity?
+fun(self: any):luaentity
 ```
 
  * `get_luaentity()`:
@@ -7346,7 +7311,7 @@ fun(self: any):PlayerMetaRef
 
 
 ```lua
-fun(self: any):table?
+fun(self: any):table
 ```
 
  Player only
@@ -7442,7 +7407,7 @@ fun(self: any):number
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  * `get_player_name()`: Returns player name or `""` if is not a player
@@ -7452,7 +7417,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):vector?
+fun(self: any):vector
 ```
 
  Player only
@@ -7490,7 +7455,7 @@ fun(self: any):vector?
 
 
 ```lua
-fun(self: any, as_table: boolean):table?
+fun(self: any, as_table: boolean):table
 ```
 
  Player only
@@ -7505,7 +7470,7 @@ fun(self: any, as_table: boolean):table?
 
 
 ```lua
-fun(self: any):table?
+fun(self: any):table
 ```
 
  Player only
@@ -7516,7 +7481,7 @@ fun(self: any):table?
 
 
 ```lua
-fun(self: any):table?
+fun(self: any):table
 ```
 
  Player only
@@ -7545,7 +7510,7 @@ fun(self: any):vector
 
 
 ```lua
-fun(self: any):integer?
+fun(self: any):integer
 ```
 
  * `get_wield_index()`: returns the wield list index of the wielded item (starting with 1)
@@ -7554,7 +7519,7 @@ fun(self: any):integer?
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  * `get_wield_list()`: returns the name of the inventory list the wielded item
@@ -7564,7 +7529,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):ItemStack?
+fun(self: any):ItemStack
 ```
 
  * `get_wielded_item()`: returns a copy of the wielded item as an `ItemStack`
@@ -7640,7 +7605,7 @@ fun(self: any):{ hotbar: boolean?, healthbar: boolean?, crosshair: boolean?, wie
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  Player only
@@ -7650,7 +7615,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):integer?
+fun(self: any):integer
 ```
 
  Player only
@@ -7661,7 +7626,7 @@ fun(self: any):integer?
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  Player only
@@ -8631,7 +8596,7 @@ fun(self: any, vel: vector)
 
 
 ```lua
-fun(self: any, item: ItemStack):boolean?
+fun(self: any, item: ItemStack):boolean
 ```
 
  * `set_wielded_item(item)`: replaces the wielded item, returns `true` if
@@ -9770,7 +9735,7 @@ number?
 
 
 ```lua
-(number|{ min: number, max: number, bias: number? })?
+particle_spawner_tween_float_range?
 ```
 
 ## animation
@@ -9800,6 +9765,8 @@ string
 ```lua
 (number|{ x: number, y: number })?
 ```
+
+|number[]
 
 ## scale_tween
 
@@ -10224,7 +10191,7 @@ fun(self: any, bone: string):vector
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -10234,7 +10201,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):{ mode: "any"|"first"|"third"|"third_front" }?
+fun(self: any):{ mode: "any"|"first"|"third"|"third_front" }
 ```
 
  Player only
@@ -10265,7 +10232,7 @@ fun(self: any):table
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -10288,7 +10255,7 @@ fun(self: any):table<string, boolean>
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  Luaentity only
@@ -10300,7 +10267,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):vector?, vector?, vector?
+fun(self: any):vector?, vector?, vector
 ```
 
  Player only
@@ -10310,7 +10277,7 @@ fun(self: any):vector?, vector?, vector?
 
 
 ```lua
-fun(self: any):{ breathing: boolean, drowning: boolean, node_damage: boolean }?
+fun(self: any):{ breathing: boolean, drowning: boolean, node_damage: boolean }
 ```
 
  Player only
@@ -10355,7 +10322,7 @@ fun(self: any):number
 
 
 ```lua
-fun(self: any):InvRef?
+fun(self: any):InvRef
 ```
 
  * `get_inventory()`: returns an `InvRef` for players, otherwise returns `nil`
@@ -10397,7 +10364,7 @@ fun(self: any):table?, table?, table?, table?, table?
 
 
 ```lua
-fun(self: any):vector?
+fun(self: any):vector
 ```
 
  Player only
@@ -10407,7 +10374,7 @@ fun(self: any):vector?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -10418,7 +10385,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -10431,7 +10398,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -10443,7 +10410,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):number?
+fun(self: any):number
 ```
 
  Player only
@@ -10455,7 +10422,7 @@ fun(self: any):number?
 
 
 ```lua
-fun(self: any):luaentity?
+fun(self: any):luaentity
 ```
 
  * `get_luaentity()`:
@@ -10476,7 +10443,7 @@ fun(self: any):PlayerMetaRef
 
 
 ```lua
-fun(self: any):table?
+fun(self: any):table
 ```
 
  Player only
@@ -10572,7 +10539,7 @@ fun(self: any):number
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  * `get_player_name()`: Returns player name or `""` if is not a player
@@ -10582,7 +10549,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):vector?
+fun(self: any):vector
 ```
 
  Player only
@@ -10620,7 +10587,7 @@ fun(self: any):vector?
 
 
 ```lua
-fun(self: any, as_table: boolean):table?
+fun(self: any, as_table: boolean):table
 ```
 
  Player only
@@ -10635,7 +10602,7 @@ fun(self: any, as_table: boolean):table?
 
 
 ```lua
-fun(self: any):table?
+fun(self: any):table
 ```
 
  Player only
@@ -10646,7 +10613,7 @@ fun(self: any):table?
 
 
 ```lua
-fun(self: any):table?
+fun(self: any):table
 ```
 
  Player only
@@ -10675,7 +10642,7 @@ fun(self: any):vector
 
 
 ```lua
-fun(self: any):integer?
+fun(self: any):integer
 ```
 
  * `get_wield_index()`: returns the wield list index of the wielded item (starting with 1)
@@ -10684,7 +10651,7 @@ fun(self: any):integer?
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  * `get_wield_list()`: returns the name of the inventory list the wielded item
@@ -10694,7 +10661,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):ItemStack?
+fun(self: any):ItemStack
 ```
 
  * `get_wielded_item()`: returns a copy of the wielded item as an `ItemStack`
@@ -10770,7 +10737,7 @@ fun(self: any):{ hotbar: boolean?, healthbar: boolean?, crosshair: boolean?, wie
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  Player only
@@ -10780,7 +10747,7 @@ fun(self: any):string?
 
 
 ```lua
-fun(self: any):integer?
+fun(self: any):integer
 ```
 
  Player only
@@ -10791,7 +10758,7 @@ fun(self: any):integer?
 
 
 ```lua
-fun(self: any):string?
+fun(self: any):string
 ```
 
  Player only
@@ -11761,7 +11728,7 @@ fun(self: any, vel: vector)
 
 
 ```lua
-fun(self: any, item: ItemStack):boolean?
+fun(self: any, item: ItemStack):boolean
 ```
 
  * `set_wielded_item(item)`: replaces the wielded item, returns `true` if
@@ -11842,21 +11809,6 @@ fun(name: string, revoker_name: string)
 
 # PseudoRandom
 
-
-```lua
-PseudoRandom
-```
-
-
-```lua
-function PseudoRandom(seed: integer)
-```
-
-
----
-
-# PseudoRandom
-
 ## get_state
 
 
@@ -11877,6 +11829,21 @@ function PseudoRandom(seed: integer)
 ```
 
  * `next()`: return next integer random number [`0`...`32767`]
+
+
+---
+
+# PseudoRandom
+
+
+```lua
+PseudoRandom
+```
+
+
+```lua
+function PseudoRandom(seed: integer)
+```
 
 
 ---
@@ -11922,22 +11889,6 @@ function Raycast(pos1: vector, pos2: vector, objects?: boolean, liquids?: boolea
 
 # SecureRandom
 
-## next_bytes
-
-
-```lua
-(method) SecureRandom:next_bytes(count: integer)
-  -> string
-```
-
- * `next_bytes([count])`: return next `count` (default 1, capped at 2048) many
-   random bytes, as a string.
-
-
----
-
-# SecureRandom
-
 
 ```lua
 SecureRandom
@@ -11948,6 +11899,22 @@ SecureRandom
 function SecureRandom()
   -> SecureRandom
 ```
+
+
+---
+
+# SecureRandom
+
+## next_bytes
+
+
+```lua
+(method) SecureRandom:next_bytes(count: integer)
+  -> string
+```
+
+ * `next_bytes([count])`: return next `count` (default 1, capped at 2048) many
+   random bytes, as a string.
 
 
 ---
@@ -12007,17 +11974,6 @@ function Set.new(t: any[], set_mt?: boolean)
 
 ```lua
 (method) Set:remove_all(elements: any[])
-```
-
-
----
-
-# Settings
-
-
-```lua
-function Settings(filename: string)
-  -> Settings
 ```
 
 
@@ -12179,6 +12135,17 @@ fun():boolean
 
 ---
 
+# Settings
+
+
+```lua
+function Settings(filename: string)
+  -> Settings
+```
+
+
+---
+
 # SimpleSoundSpec
 
 ## fade
@@ -12317,6 +12284,13 @@ function s.load_files(paths: string[])
 
 ```lua
 table
+```
+
+## meteorites
+
+
+```lua
+s.meteorites
 ```
 
 ## player
@@ -12537,7 +12511,7 @@ function ValueNoise(noiseparams: NoiseParams)
 
 
 ```lua
-fun(pos: { x: number, y: number }):{ x: number, y: number }
+fun(self: any, pos: { x: number, y: number }):{ x: number, y: number }
 ```
 
  * `get_2d(pos)`: returns 2D noise value at `pos={x=,y=}`
@@ -12546,7 +12520,7 @@ fun(pos: { x: number, y: number }):{ x: number, y: number }
 
 
 ```lua
-fun(pos: vector):vector
+fun(self: any, pos: vector):vector
 ```
 
  * `get_3d(pos)`: returns 3D noise value at `pos={x=,y=,z=}`
@@ -12571,7 +12545,7 @@ function ValueNoiseMap(noiseparams: NoiseParams, size: vector|{ x: number, y: nu
 
 
 ```lua
-fun(pos: { x: number, y: number })
+fun(self: any, pos: { x: number, y: number })
 ```
 
  * `calc_2d_map(pos)`: Calculates the 2d noise map starting at `pos`. The result
@@ -12581,7 +12555,7 @@ fun(pos: { x: number, y: number })
 
 
 ```lua
-fun(pos: vector)
+fun(self: any, pos: vector)
 ```
 
  * `calc_3d_map(pos)`: Calculates the 3d noise map starting at `pos`. The result
@@ -12591,7 +12565,7 @@ fun(pos: vector)
 
 
 ```lua
-fun(pos: { x: number, y: number }):number[][]
+fun(self: any, pos: { x: number, y: number }):number[][]
 ```
 
  * `get_2d_map(pos)`: returns a `<size.x>` times `<size.y>` 2D array of 2D noise
@@ -12601,7 +12575,7 @@ fun(pos: { x: number, y: number }):number[][]
 
 
 ```lua
-fun(pos: { x: number, y: number }, buffer?: number[]):number[]?
+fun(self: any, pos: { x: number, y: number }, buffer?: number[]):number[]?
 ```
 
  * `get_2d_map_flat(pos, buffer)`: returns a flat `<size.x * size.y>` element
@@ -12611,7 +12585,7 @@ fun(pos: { x: number, y: number }, buffer?: number[]):number[]?
 
 
 ```lua
-fun(pos: vector):number[][][]
+fun(self: any, pos: vector):number[][][]
 ```
 
  * `get_3d_map(pos)`: returns a `<size.x>` times `<size.y>` times `<size.z>`
@@ -12621,7 +12595,7 @@ fun(pos: vector):number[][][]
 
 
 ```lua
-fun(pos: vector, buffer?: number[]):number[]?
+fun(self: any, pos: vector, buffer?: number[]):number[]?
 ```
 
  * `get_3d_map_flat(pos, buffer)`: Same as `get2dMap_flat`, but 3D noise
@@ -12650,6 +12624,22 @@ fun(slice_offset: { x: number?, y: number?, z: number? }, slice_size: { x: numbe
    noise:calc_3d_map({x=1000, y=1000, z=1000})
    noisevals = noise:get_map_slice({x=24, z=1}, {x=1, z=1})
    ```
+
+
+---
+
+# VoxelArea
+
+
+```lua
+VoxelArea
+```
+
+
+```lua
+function VoxelArea(pmin: vector, pmax: vector)
+  -> VoxelArea
+```
 
 
 ---
@@ -12748,22 +12738,6 @@ fun(slice_offset: { x: number?, y: number?, z: number? }, slice_size: { x: numbe
 
 ---
 
-# VoxelArea
-
-
-```lua
-VoxelArea
-```
-
-
-```lua
-function VoxelArea(pmin: vector, pmax: vector)
-  -> VoxelArea
-```
-
-
----
-
 # VoxelArea.contains
 
 
@@ -12858,22 +12832,6 @@ function VoxelArea(pmin: vector, pmax: vector)
 ```lua
 (method) VoxelArea:position(i: number)
   -> vector
-```
-
-
----
-
-# VoxelManip
-
-
-```lua
-VoxelManip
-```
-
-
-```lua
-function VoxelManip(p1?: vector, p2?: vector)
-  -> VoxelManip
 ```
 
 
@@ -13121,6 +13079,22 @@ Unofficial note: If you can, try to not use this function for performance reason
 
 ---
 
+# VoxelManip
+
+
+```lua
+VoxelManip
+```
+
+
+```lua
+function VoxelManip(p1?: vector, p2?: vector)
+  -> VoxelManip
+```
+
+
+---
+
 # VoxelManip.calc_lighting
 
 
@@ -13327,14 +13301,14 @@ Unofficial note: If you can, try to not use this function for performance reason
 # _G
 
 
----
-
-# _G
-
-
 ```lua
 _G
 ```
+
+
+---
+
+# _G
 
 
 ---
@@ -15858,6 +15832,7 @@ function core.ipc_cas(key: string, old_value: any, new_value: any)
 
 ```lua
 function core.ipc_get(key: string)
+  -> any
 ```
 
  * `core.ipc_get(key)`:
@@ -17257,6 +17232,14 @@ function core.register_on_shutdown(f: fun():nil)
    registered callbacks **will likely not be run**. Data should be saved at
    semi-frequent intervals as well as on server shutdown.
 
+## register_ore
+
+
+```lua
+function core.register_ore(def: OreDef)
+  -> number?
+```
+
 ## register_portable_metatable
 
 
@@ -18457,11 +18440,6 @@ core.EMERGE_CANCELLED
 # core.EMERGE_ERRORED
 
 
----
-
-# core.EMERGE_ERRORED
-
-
 ```lua
 core.EMERGE_ERRORED
 ```
@@ -18469,7 +18447,7 @@ core.EMERGE_ERRORED
 
 ---
 
-# core.EMERGE_FROM_DISK
+# core.EMERGE_ERRORED
 
 
 ---
@@ -18480,6 +18458,11 @@ core.EMERGE_ERRORED
 ```lua
 core.EMERGE_FROM_DISK
 ```
+
+
+---
+
+# core.EMERGE_FROM_DISK
 
 
 ---
@@ -18502,14 +18485,14 @@ core.EMERGE_FROM_MEMORY
 # core.EMERGE_GENERATED
 
 
-```lua
-core.EMERGE_GENERATED
-```
-
-
 ---
 
 # core.EMERGE_GENERATED
+
+
+```lua
+core.EMERGE_GENERATED
+```
 
 
 ---
@@ -19086,17 +19069,6 @@ function core.facedir_to_dir(facedir: number)
 
 # core.features
 
-
-```lua
-function core.features()
-  -> core.features
-```
-
-
----
-
-# core.features
-
 ## abm_min_max_y
 
 
@@ -19546,6 +19518,17 @@ boolean?
 
  wallmounted nodes mounted at floor or ceiling may additionally
  be rotated by 90° with special param2 values (5.9.0)
+
+
+---
+
+# core.features
+
+
+```lua
+function core.features()
+  -> core.features
+```
 
 
 ---
@@ -20398,17 +20381,6 @@ function core.get_value_noise_map(noiseparams: NoiseParams, size: vector|{ x: nu
 
 # core.get_version
 
-
-```lua
-function core.get_version()
-  -> core.get_version
-```
-
-
----
-
-# core.get_version
-
 ## hash
 
 
@@ -20466,6 +20438,17 @@ These annotations are made for 5.13.0 (and above i guess? or even below?)
 
 ---
 
+# core.get_version
+
+
+```lua
+function core.get_version()
+  -> core.get_version
+```
+
+
+---
+
 # core.get_voxel_manip
 
 
@@ -20514,6 +20497,12 @@ function core.global_exists(name: any)
 
 ```lua
 function core.handle_node_drops(pos: vector, drops: string[], digger: PlayerRef)
+```
+
+
+```lua
+function core.handle_node_drops(pos: any, drops: any, digger: any)
+  -> nil
 ```
 
 
@@ -20590,6 +20579,7 @@ function core.ipc_cas(key: string, old_value: any, new_value: any)
 
 ```lua
 function core.ipc_get(key: string)
+  -> any
 ```
 
 
@@ -21603,6 +21593,17 @@ function core.register_on_rightclickplayer(f: fun(player: ObjectRef, clicker: Ob
 ```lua
 function core.register_on_shutdown(f: fun():nil)
   -> nil
+```
+
+
+---
+
+# core.register_ore
+
+
+```lua
+function core.register_ore(def: OreDef)
+  -> number?
 ```
 
 
@@ -23602,7 +23603,7 @@ function dofile(filename?: string)
 
 
 ```lua
-function dump(value: any, indent: string)
+function dump(value: any, indent?: string)
   -> string
 ```
 
@@ -25789,7 +25790,7 @@ trunk node name
 
 
 ```lua
-fun(self: luaentity)
+fun(self: any)
 ```
 
 ## name
@@ -25851,21 +25852,21 @@ ObjectRef
 
 
 ```lua
-fun(self: luaentity, staticdata: string, dtime_s: number)
+fun(self: any, staticdata: string, dtime_s: number)
 ```
 
 ## on_attach_child
 
 
 ```lua
-fun(self: luaentity, child: ObjectRef)
+fun(self: any, child: ObjectRef)
 ```
 
 ## on_deactivate
 
 
 ```lua
-fun(self: luaentity, removal: boolean)
+fun(self: any, removal: boolean)
 ```
 
  * `on_deactivate(self, removal)`
@@ -25881,42 +25882,42 @@ fun(self: luaentity, removal: boolean)
 
 
 ```lua
-fun(self: luaentity, killer?: ObjectRef)
+fun(self: any, killer?: ObjectRef)
 ```
 
 ## on_detach
 
 
 ```lua
-fun(self: luaentity, parent: ObjectRef)
+fun(self: any, parent: ObjectRef)
 ```
 
 ## on_detach_child
 
 
 ```lua
-fun(self: luaentity, child: ObjectRef)
+fun(self: any, child: ObjectRef)
 ```
 
 ## on_punch
 
 
 ```lua
-fun(self: luaentity, puncher?: ObjectRef, time_from_last_punch?: number, tool_capabilities?: tool_capabilities, dir: vector, damage: number):boolean
+fun(self: any, puncher?: ObjectRef, time_from_last_punch?: number, tool_capabilities?: tool_capabilities, dir: vector, damage: number):boolean
 ```
 
 ## on_rightclick
 
 
 ```lua
-fun(self: luaentity, clicker: ObjectRef)
+fun(self: any, clicker: ObjectRef)
 ```
 
 ## on_step
 
 
 ```lua
-fun(self: luaentity, dtime: number, moveresult: moveresult)
+fun(self: any, dtime: number, moveresult: moveresult)
 ```
 
 
@@ -28958,6 +28959,7 @@ function core.ipc_cas(key: string, old_value: any, new_value: any)
 
 ```lua
 function core.ipc_get(key: string)
+  -> any
 ```
 
  * `core.ipc_get(key)`:
@@ -30356,6 +30358,14 @@ function core.register_on_shutdown(f: fun():nil)
  * **Warning**: If the server terminates abnormally (i.e. crashes), the
    registered callbacks **will likely not be run**. Data should be saved at
    semi-frequent intervals as well as on server shutdown.
+
+## register_ore
+
+
+```lua
+function core.register_ore(def: OreDef)
+  -> number?
+```
 
 ## register_portable_metatable
 
@@ -32411,7 +32421,7 @@ number?
 
 
 ```lua
-{ x: number, y: number }
+number|{ x: number, y: number }
 ```
 
 ## reps
@@ -32692,7 +32702,7 @@ string
 
 
 ```lua
-vector?
+vector
 ```
 
  Unofficial notes:
@@ -32717,7 +32727,7 @@ This will probably drastically reduce on garbage collector use, as vectors are H
 
 
 ```lua
-integer?
+integer
 ```
 
  Only raycast supports this
@@ -32728,7 +32738,7 @@ integer?
 
 
 ```lua
-vector?
+vector
 ```
 
  Only raycast supports this
@@ -32742,7 +32752,7 @@ vector?
 
 
 ```lua
-vector?
+vector
 ```
 
  Only raycast supports this
@@ -32754,7 +32764,7 @@ vector?
 
 
 ```lua
-ObjectRef?
+ObjectRef
 ```
 
  `ObjectRef`
@@ -32809,7 +32819,7 @@ ObjectRef?
 
 
 ```lua
-vector?
+vector
 ```
 
  Unofficial notes:
@@ -33199,6 +33209,212 @@ table
 
 ```lua
 table
+```
+
+
+---
+
+# s.meteorites
+
+
+```lua
+s.meteorites
+```
+
+
+---
+
+# s.meteorites
+
+## attract_meteorite
+
+
+```lua
+function s.meteorites.attract_meteorite(meteorite_obj: ObjectRef, to: vector, strength: number, dtime: any)
+```
+
+ Attracts a single meteorite
+ For attracting meteorites in a radius, see `s.meteorites.attract_meteorites_in_radius`
+ :)
+
+## attract_meteorites_in_radius
+
+
+```lua
+function s.meteorites.attract_meteorites_in_radius(group_name: string, strength: number, pos: vector, dtime: number)
+```
+
+ Dtime: Time between these function calls
+ For attracting a single meteorite see `s.meteorites.attract_meteorite`
+  NOTE: Radius is hardcoded to be 200, may change (correct radius would be infinity but uhh, i DON'T WANT TO DEAL WITH THAT OH NO!)
+
+## attract_meteorites_in_radius_smooth
+
+
+```lua
+(async) function s.meteorites.attract_meteorites_in_radius_smooth(group_name: any, strength: any, pos: any, steps: any, time: any)
+```
+
+ Attracts meteorites in a more smooth way, do not use if you don't need to
+ More performant than running attract_meteorites_in_radius multiple times
+
+## get_attraction_velocity
+
+
+```lua
+function s.meteorites.get_attraction_velocity(pos1: vector, pos2: vector)
+  -> vector
+```
+
+ FROM SKYBLOCK ZERO sbz_api.get_attraction(pos1, pos2)
+ Gets the attraction velocity, multiply it by dtime and some amount
+
+## meteorite_explode
+
+
+```lua
+function s.meteorites.meteorite_explode(meteorite_entity: any)
+```
+
+## register_attract_node_group
+
+
+```lua
+function s.meteorites.register_attract_node_group(group_name: string)
+  -> nil
+```
+
+ Makes nodes with `group_name` attract meteorites
+ NOTE: if something has 2 meteorite-attracting-groups, and a meteorite happens to be attracted to both of them, it will be attracted by both groups
+
+## register_entity
+
+
+```lua
+function s.meteorites.register_entity(mod: string, name: string, properties: s.meteorites.meteorite_properties)
+```
+
+ Registers a meteorite
+ It is an interesting entity
+
+## registered_meteorites
+
+
+```lua
+table<string, s.meteorites.meteorite_properties>
+```
+
+## trigger_attract_mode
+
+
+```lua
+function s.meteorites.trigger_attract_mode(meteorite_obj: any, from_pos: any, strength: any)
+```
+
+ Triggers the <meteorite properties>.on_attract function if present
+ It will do this every time the meteorite gets attracted to
+ You can use this for cool visuals (Not this function though, its more like an internal function, you shouldn't call it, you can override it if you want to)
+
+
+---
+
+# s.meteorites.attract_meteorite
+
+
+```lua
+function s.meteorites.attract_meteorite(meteorite_obj: ObjectRef, to: vector, strength: number, dtime: any)
+```
+
+
+---
+
+# s.meteorites.attract_meteorites_in_radius
+
+
+```lua
+function s.meteorites.attract_meteorites_in_radius(group_name: string, strength: number, pos: vector, dtime: number)
+```
+
+
+---
+
+# s.meteorites.attract_meteorites_in_radius_smooth
+
+
+```lua
+(async) function s.meteorites.attract_meteorites_in_radius_smooth(group_name: any, strength: any, pos: any, steps: any, time: any)
+```
+
+
+---
+
+# s.meteorites.get_attraction_velocity
+
+
+```lua
+function s.meteorites.get_attraction_velocity(pos1: vector, pos2: vector)
+  -> vector
+```
+
+
+---
+
+# s.meteorites.meteorite_explode
+
+
+```lua
+function s.meteorites.meteorite_explode(meteorite_entity: any)
+```
+
+
+---
+
+# s.meteorites.meteorite_properties
+
+
+---
+
+# s.meteorites.meteorite_properties.visual
+
+
+---
+
+# s.meteorites.register_attract_node_group
+
+
+```lua
+function s.meteorites.register_attract_node_group(group_name: string)
+  -> nil
+```
+
+
+---
+
+# s.meteorites.register_entity
+
+
+```lua
+function s.meteorites.register_entity(mod: string, name: string, properties: s.meteorites.meteorite_properties)
+```
+
+
+---
+
+# s.meteorites.registered_meteorites
+
+
+```lua
+table<string, s.meteorites.meteorite_properties>
+```
+
+
+---
+
+# s.meteorites.trigger_attract_mode
+
+
+```lua
+function s.meteorites.trigger_attract_mode(meteorite_obj: any, from_pos: any, strength: any)
 ```
 
 
@@ -35063,15 +35279,15 @@ function tostring(v: any)
 # type
 
 
+---
+
+# type
+
+
 ```lua
 function type(v: any)
   -> type: "boolean"|"function"|"nil"|"number"|"string"...(+3)
 ```
-
-
----
-
-# type
 
 
 ---
