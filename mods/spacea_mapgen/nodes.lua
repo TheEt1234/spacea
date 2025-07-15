@@ -70,6 +70,8 @@ core.register_node('spacea_mapgen:cloud_piece_light', {
 
         core.set_node(pos, { name = 'spacea_cloud_machines:charged_cloud_1' })
         core.add_particlespawner {
+            _limiting_pos = pos,
+            _limiting_priority = s.particle_spawner_priorities.highest,
             time = 0.01,
             amount = 300,
             exptime = 8,

@@ -22,11 +22,13 @@
 - Try to not get warnings with lua_ls, use the `---@diagnostic` comments
 - Do not use a large amount/non-trivial amount of AI generated code, [please see contentDB copyright guide before using an AI to assist with code](https://content.luanti.org/help/copyright)
 - When sacrificing "code quality" for optimization, **FIRST VERIFY IF THAT OPTIMIZATION IS ACTUALLY NEEDED PLEASE, NO YOUR "INTUITION" IS PROBABLY WRONG**
+- Any/all particle-emitting nodes must respect the particle spawner limiting system (specifying `_limiting_pos` and `_limiting_priority = s.particle_spawner_priorities.<whatever, usually lowest>`) and check if they are neighbors to air (Only if in ABM)
+- Never hardcode an `node_name == 'air'` check, instead use `s.is_air(node_name)`
 
 # Art guidelines (can be broken if needed)
 
 - **1 node usually 16 pixels**, meaning if you had an entity who was a 2x2x2 cube, its texture would be 32x32, **You can break this guideline in particles**
-- no ai generated art
+- no ai generated art (cannot be broken)
 
 # "Do this sometimes"
 

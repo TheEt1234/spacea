@@ -5,6 +5,8 @@ local function trans_sparks(pos, pointed_thing, amount_mul, destructive)
     amount_mul = amount_mul or 1
     destructive = destructive or false
     core.add_particlespawner {
+        _limiting_pos = pos,
+        _limiting_priority = s.particle_spawner_priorities.highest,
         amount = 25 * amount_mul,
         time = 0.1,
         exptime = { min = 0.5, max = destructive and 6 or 3, bias = destructive and 4 or 2 },
@@ -34,12 +36,13 @@ local function supercritical_sparks(pos, intensity) -- when in stages 2 and 3, c
     local high_intensity = intensity == 2
     local low_intensity = intensity == 1
     core.add_particlespawner {
-        amount = 25 * (low_intensity and 1 or 1),
+        _limiting_pos = pos,
+        _limiting_priority = s.particle_spawner_priorities.low,
+        amount = 15 * (low_intensity and 1 or 1),
         time = (low_intensity and 1 or 1),
-        exptime = { min = 1, max = 20, bias = low_intensity and 2 or 1 },
-        collisiondetection = true,
+        exptime = { min = 1, max = 15, bias = low_intensity and 2 or 1 },
+        collisiondetection = false,
         collision_removal = false,
-        bounce = 1,
 
         pos = pos,
         radius = { min = 0.6, max = 1, bias = 0.6 },
@@ -93,6 +96,8 @@ local function sparks(pos, puncher, pointed_thing, amount_mul, destructive)
     local vel_shift = -vector.subtract(puncher_pos, above_pos) * strength
 
     core.add_particlespawner {
+        _limiting_pos = pos,
+        _limiting_priority = s.particle_spawner_priorities.highest,
         time = 0.1,
         amount = 50 * amount_mul,
         exptime = { min = 0.5, max = destructive and 8 or 5, bias = destructive and 4 or 2 },
@@ -250,7 +255,7 @@ for i = 1, 3 do
                 if newname == 'spacea_cloud_machines:charged_cloud_3' then
                     core.get_node_timer(pos):start(60)
                 elseif newname == 'spacea_cloud_machines:charged_cloud_2' then
-                    core.get_node_timer(pos):start(160) -- lag solves itself eh?
+                    core.get_node_timer(pos):start(160)
                 end
             else
                 trans_sparks(pos, pointed_thing, 4, true)
@@ -265,17 +270,19 @@ s.meteorites.register_attract_node_group 'cloud_meteorite_attract'
 core.register_abm {
     label = 'Supercritical sparks charged_cloud_2',
     interval = 1,
-    chance = 1,
+    chance = 2,
     catch_up = false,
     nodenames = { 'spacea_cloud_machines:charged_cloud_2' },
+    neighbors = { 'group:air', 'air' },
     action = function(pos, _, _, _) supercritical_sparks(pos, 1) end,
 }
 
 core.register_abm {
     label = 'Supercritical sparks charged_cloud_3',
     interval = 1,
-    chance = 1,
+    chance = 2,
     catch_up = false,
     nodenames = { 'spacea_cloud_machines:charged_cloud_3' },
+    neighbors = { 'group:air', 'air' },
     action = function(pos, _, _, _) supercritical_sparks(pos, 2) end,
 }

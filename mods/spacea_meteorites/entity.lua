@@ -4,15 +4,15 @@
 --- i saw it being written in lua, you know, not-rust
 --- nahh i'm suree it will be all fine as this project grows
 
----@type table<string, s.meteorites.meteorite_properties>
+---@type table<string, meteorite_properties>
 local registered_meteorites = {}
 
 s.meteorites.registered_meteorites = registered_meteorites
 
----@class s.meteorites.meteorite_properties
-local props = {
-    ---@class s.meteorites.meteorite_properties.visual
-    visual = { ---@type s.meteorites.meteorite_properties.visual
+---@class meteorite_properties
+local _props = {
+    ---@class meteorite_properties.visual
+    visual = { ---@type meteorite_properties.visual
         name = 'cube', ---@type "cube"|"mesh"
         mesh = '', ---@type string?
         textures = {}, ---@type string[]?
@@ -22,17 +22,19 @@ local props = {
     },
     attract_groups = {}, ---@type table<string, boolean>
     start_speed = 3, ---@type number
-    meteorite_explode = s.meteorites.meteorite_explode, ---@type (fun(meteorite_entity:luaentity):nil)?
+    on_collide = s.meteorites.default_on_collide, ---@type (fun(meteorite_entity:luaentity):nil)?
     on_attract = function() end, ---@type (fun(meteorite_entity:luaentity, from:vector?, strength:number):nil)?
 }
 
-function s.meteorites.meteorite_explode(meteorite_entity) meteorite_entity.object:remove() end
+--- By default, simply removes the entity
+--- WARN: ONLY USED FOR TESTING
+function s.meteorites.default_on_collide(meteorite_entity) meteorite_entity.object:remove() end
 
 --- Registers a meteorite
 --- It is an interesting entity
 ---@param mod string
 ---@param name string
----@param properties s.meteorites.meteorite_properties
+---@param properties meteorite_properties
 function s.meteorites.register_entity(mod, name, properties)
     local box_size = properties.visual.size and properties.visual.size.x / 2 or 0.5
 
@@ -112,7 +114,7 @@ function s.meteorites.register_entity(mod, name, properties)
         end,
         on_step = function(self, dtime, moveresult)
             if moveresult.collides then
-                (properties.meteorite_explode or s.meteorites.meteorite_explode)(self)
+                (properties.on_collide or s.meteorites.default_on_collide)(self)
             end
         end,
     })

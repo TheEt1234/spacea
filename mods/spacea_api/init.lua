@@ -23,6 +23,7 @@ s.load_files {
     'custom_falling.lua',
     'arm.lua',
     'settings.lua',
+    'particle_spawner_limiter.lua',
 }
 
 if s.version.is_dev then s.load_file 'strict.lua' end

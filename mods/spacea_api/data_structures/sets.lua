@@ -4,7 +4,7 @@ s.Set = {}
 ---@param t any[]
 ---@param set_mt boolean?
 ---@return Set|table<any, boolean>
-function s.Set.new(t, set_mt)
+function s.Set:new(t, set_mt)
     local set = {}
     if t ~= nil then s.foreach(t, function(v) set[v] = true end) end
     if set_mt then setmetatable(set, { __index = s.Set }) end

@@ -89,5 +89,5 @@ core.register_on_generated(function(vm, minp, maxp, _)
     vm:set_data(data)
     vm:calc_lighting()
 
-    core.debug('Mapgen took: ' .. os.clock() - t0 .. 's')
+    --    core.debug('Mapgen took: ' .. os.clock() - t0 .. 's')
 end)
