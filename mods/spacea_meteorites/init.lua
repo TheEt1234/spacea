@@ -3,6 +3,6 @@ s.meteorites = {}
 
 s.load_files {
     'entity.lua', -- meteorite API
-    'cloudenium.lua',
+    'spawning.lua',
     'cloud_meteorite.lua',
 }

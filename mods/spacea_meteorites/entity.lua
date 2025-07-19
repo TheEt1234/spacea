@@ -87,6 +87,13 @@ function s.meteorites.register_entity(mod, name, properties)
             self.object:set_rotation(
                 vector.new(math.random() * 2, math.random(), math.random() * 2) * math.pi -- this line is from sbz: by theidealist, thank you
             )
+            --- TODO:
+            -- core.sound_play({ name = 'tsfx_meteorite_ambient' }, {
+            --     loop = true,
+            --     object = self.object,
+            --     gain = 100,
+            --     max_hear_distance = 256,
+            -- }, false)
         end,
         on_punch = function(self, puncher, time_from_last_punch)
             -- Hmm, if i punch this meteorite, surely it will explode, surely

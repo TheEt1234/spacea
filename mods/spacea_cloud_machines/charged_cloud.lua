@@ -1,4 +1,6 @@
 -- Made entirely of light and glowy cloud pieces, this is your starting point
+-- THE EXPLOSION CODE HERE IS ONLY MEANT FOR CLOUDS, and only these specific explosions
+-- Do not extend this to groups that may require new features
 
 --- when its transitioning between states, or exploding
 local function trans_sparks(pos, pointed_thing, amount_mul, destructive)
@@ -123,33 +125,56 @@ local function sparks(pos, puncher, pointed_thing, amount_mul, destructive)
         acc = vector.new(0, -s.gravity * 3, 0),
     }
 end
+
+--- IMPORTANT: THIS EXPLOSION CODE ISN'T MEANT TO BE GENERAL-USE, ONLY FOR CLOUDY STUFF
+--- It isn't optimized at all, doesn't take into account custom node drops, just...
+--- If you are making general explosion code START FROM SCRATCH INSTEAD OF THIS
+---
+--- Thank you
+--- - frog
+---@param puncher PlayerRef
 local function explode(pointed_thing, puncher)
+    local puncher_name = puncher:get_player_name()
     local pos = pointed_thing.under
     core.remove_node(pos)
-    local radius = 4 -- this is the radius of the random direction
-    local strength = 4
+    local strength = 16
 
     -- the idea is: Surprizingly large range, weak explosion power, very directed by player
+    -- BTW: don't put check for falling here
+    -- You can put things that harm the player here though, assuming they collide with a raycast
 
-    local num_rays = 80 -- overkill perhaps?
+    local num_rays = 100 -- overkill perhaps?
     local drops = {}
 
-    local puncher_pos = s.entities.get_eyepos(puncher)
-    local under_pos = pointed_thing.under
-    local dir_shift_strength = 4 -- strength of the player's fist, should not overpower `radius`
-    local dir_shift = -vector.subtract(puncher_pos, under_pos) * dir_shift_strength
+    local puncher_look = puncher:get_look_dir()
+    local dir_shift_strength = 12 -- strength of the player's fist, should not overpower `radius`
+    local dir_shift = puncher_look * dir_shift_strength
+    local spread = 3
 
     local delete_queue = {}
 
     for _ = 1, num_rays do
-        -- skew a bit in the direction of pointed
-        local ray =
-            Raycast(pos, pos + (vector.random_direction() * radius) + dir_shift, false, false)
+        local ray = Raycast(pos, pos + dir_shift + vector.random_direction() * spread, false, false)
         local used_strength = 0
         ---@type pointed_thing
         for target_pointed in ray do
+            if core.is_protected(target_pointed.under, puncher_name) then break end
             local node = core.get_node(target_pointed.under)
-            if not s.is_air(node.name) then
+
+            ---@class NodeDef
+            ---@field _on_cloudy_explode? fun(pos:vector, remaining_strength:number, delete_queue:vector[], drops: table<string, number>):number # Returns the remaining strength after, can be used to amplify a cloud explosion, mutate `delete_queue` and `drops` tables to do node deletion and drops
+
+            if core.registered_nodes[node.name]._on_cloudy_explode then
+                used_strength = strength
+                    - core.registered_nodes[node.name]._on_cloudy_explode(
+                        target_pointed.under,
+                        strength - used_strength,
+                        delete_queue,
+                        drops
+                    )
+
+                if used_strength > strength then break end
+            elseif not s.is_air(node.name) then
                 local cloudness = core.get_item_group(node.name, 'cloudy')
                 if cloudness == 0 then break end
                 used_strength = used_strength + (1 / cloudness)
@@ -170,7 +195,27 @@ local function explode(pointed_thing, puncher)
 
         core.add_item(pointed_thing.under, leftover)
     end
-    sparks(pointed_thing.above, puncher, pointed_thing, 10, true)
+
+    -- then oOO particles
+    -- NEEDS to be a particle spawner i'm sorry xDDDD [need scale_tween]
+    core.add_particlespawner {
+        _direct = true,
+        amount = 1,
+        time = 0.5,
+        pos = pointed_thing.above,
+        vel = (puncher:get_look_dir() or vector.zero()) * 40,
+        exptime = 0.6,
+        collision_removal = true,
+        collisiondetection = true,
+        drag = 0.001,
+        glow = 14,
+        animation = { type = 'vertical_frames', length = -1 },
+        texture = {
+            name = 'spacea_cloud_machines_explosion_echo.png',
+            scale_tween = { 10, 50 },
+            alpha_tween = { 1, 0 },
+        },
+    }
 end
 
 for i = 1, 3 do
@@ -286,3 +331,15 @@ core.register_abm {
     neighbors = { 'group:air', 'air' },
     action = function(pos, _, _, _) supercritical_sparks(pos, 2) end,
 }
+
+s.meteorites.register_node_meteorite_spawner('spacea_cloud_machines:charged_cloud_2', 44, {
+    time = 0, -- not relevant
+    type = 'spacea_meteorites:cloud_meteorite',
+    distance = { min = 64, max = 128 }, -- why am i doing powers of two
+})
+
+s.meteorites.register_node_meteorite_spawner('spacea_cloud_machines:charged_cloud_3', 22, {
+    time = 0, -- not relevant
+    type = 'spacea_meteorites:cloud_meteorite',
+    distance = { min = 32, max = 64 }, -- why am i doing powers of two, anyway: intentionally allows a bit closer
+})

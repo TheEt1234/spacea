@@ -5,4 +5,5 @@ s.load_files {
     'skybox.lua',
     'hud.lua',
     'armor.lua',
+    'item_related.lua',
 }

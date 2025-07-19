@@ -21,6 +21,7 @@ s.meteorites.register_entity('spacea_meteorites', 'cloud_meteorite', {
         local pos = meteorite_entity.object:get_pos()
         pos = pos + (vector.normalize(meteorite_entity.object:get_velocity()) * 2)
         local place_chance = 0.75 -- 75%, makes it look not weird, i think this is important
+        local cloudenium_chance = 0.25
         if meteorite_entity.attracted then
             -- yeah i know i'm duplicating that piece of code from before... oh wait yeah right you the viewer can't tell what was "before"
             s.around_pos(pos, function(ipos)
@@ -29,6 +30,12 @@ s.meteorites.register_entity('spacea_meteorites', 'cloud_meteorite', {
                     node = 'spacea_meteorites:meteoric_cloudenium_glowing'
                 else
                     if math.random() > place_chance then return end
+                    if
+                        math.random() > cloudenium_chance
+                        and node == 'spacea_meteorites:meteoric_cloudenium'
+                    then
+                        node = 'spacea_meteorites:cloudstone'
+                    end
                 end
                 if not s.is_air(core.get_node(ipos).name) then return end
                 core.set_node(ipos, { name = node })
@@ -144,10 +151,62 @@ s.meteorites.register_entity('spacea_meteorites', 'cloud_meteorite', {
 })
 
 --- Has strange properties that allow you to obtain it, but much less strange properties than the cloudeniuim block
+
+local strength_needed = 3
+
+local function calculate_meteoric_cloudenium_drops(strength)
+    return 1 + math.round(math.random() * math.min(5, math.max(2, strength))) -- so maximum is around 5
+end
+
+local function trans_particles(pos)
+    core.add_particlespawner {
+        _limiting_pos = pos,
+        _limiting_priority = s.particle_spawner_priorities.high,
+        collisiondetection = true,
+        collision_removal = true,
+
+        amount = 12,
+        time = 0.25,
+        exptime = { min = 0.3, max = 2, bias = 1 },
+        texture = {
+            name = 'spacea_cloud_machines_cloudenium_shard.png',
+            alpha_tween = { 1, 0 },
+            scale_tween = { 3, 2 },
+        },
+        pos = pos,
+        radius = { min = 0.5, max = 0.8, bias = 0.5 },
+        vel = { min = -5, max = 5, bias = 0 },
+        drag = 0.0005,
+    }
+end
+
 core.register_node('spacea_meteorites:meteoric_cloudenium', {
     description = 'Meteoric Cloudenium',
     groups = { cloudenium = 2 }, -- cannot break with fist
     tiles = { 'spacea_meteorites_meteoric_cloudenium.png' },
+    _on_cloudy_explode = function(pos, remaining_strength, _, drops)
+        if remaining_strength < strength_needed then return 0 end -- stop the ray, acting as a blocker
+        remaining_strength = remaining_strength - strength_needed
+        local cloudenium_drops = calculate_meteoric_cloudenium_drops(remaining_strength)
+        drops['spacea_cloud_machines:cloudenium_shard'] = (
+            drops['spacea_cloud_machines:cloudenium_shard'] or 0
+        ) + cloudenium_drops
+
+        core.set_node(pos, { name = 'spacea_meteorites:cloudstone' })
+        trans_particles(pos)
+        return 0
+    end,
+    on_punch = function(pos, _, puncher, _)
+        local wielded = puncher:get_wielded_item()
+        if wielded and wielded:get_name() == 'spacea_cloud_machines:cloudenium_shard' then
+            s.player.add_item(
+                puncher,
+                'spacea_cloud_machines:cloudenium_shard ' .. calculate_meteoric_cloudenium_drops(2)
+            )
+            core.set_node(pos, { name = 'spacea_meteorites:cloudstone' })
+            trans_particles(pos)
+        end
+    end,
 })
 
 --- cools down after all the meteoric cloudenium has been taken
@@ -157,3 +216,80 @@ core.register_node('spacea_meteorites:meteoric_cloudenium_glowing', {
     tiles = { 'spacea_meteorites_glowing_meteoric_cloudenium.png' },
     light_source = 14,
 })
+
+local function shard_break_particles(pointed_thing)
+    local pos = pointed_thing.under
+    local face = vector.subtract(pointed_thing.above, pointed_thing.under)
+    ---@return vector
+    local function transform_face(face_vec, add, shift)
+        local ret_vec = vector.copy(face_vec)
+        for _, v in pairs { 'x', 'y', 'z' } do -- The worst way to iterate over a vector... ?
+            local coordinate = ret_vec[v]
+            if coordinate == 0 then
+                ret_vec[v] = add
+            else
+                if math.sign(add) == -1 then
+                    ret_vec[v] = math.sign(ret_vec[v])
+                else
+                    ret_vec[v] = math.sign(ret_vec[v]) * shift
+                end
+            end
+        end
+        return ret_vec
+    end
+
+    local pos_range = {
+        min = vector.add(pos, transform_face(face, 0.49, 0.3)),
+        max = vector.add(pos, transform_face(face, -0.49, 0.3)),
+    }
+
+    core.add_particlespawner {
+        amount = 10,
+        texture = { name = 'spacea_cloud_machines_cloudenium_sparks.png', alpha_tween = { 1, 0 } },
+        glow = 14,
+        pos = pos_range,
+        vel = { min = -3, max = 3 },
+        acc = vector.new(0, -s.gravity, 0),
+        drag = vector.new(0.5, 0, 0.5),
+        collisiondetection = true,
+        collision_removal = false,
+        bouncy = 1,
+        time = 0.1,
+        _limiting_priority = s.particle_spawner_priorities.medium,
+        _limiting_pos = pos,
+    }
+end
+
+core.register_node('spacea_meteorites:cloudstone', {
+    description = 'Cloud Stone',
+    groups = { cloudenium = 2, stone = 2 }, -- cannot break with fist, must do with tool
+    tiles = { 'spacea_meteorites_cloudstone.png' },
+    on_punch = function(_, _, puncher, pointed_thing)
+        local wielded = puncher:get_wielded_item()
+        if wielded:get_name() == 'spacea_cloud_machines:cloudenium_shard' then
+            wielded:take_item(1)
+            s.player.add_item(puncher, ItemStack 'spacea_cloud_machines:cloudenium_powder 1')
+            puncher:set_wielded_item(wielded)
+            shard_break_particles(pointed_thing)
+        end
+    end,
+    on_rightclick = function(_, _, puncher, itemstack, pointed_thing)
+        if itemstack:get_name() == 'spacea_cloud_machines:cloudenium_shard' then
+            itemstack:take_item(1)
+            s.player.add_item(puncher, ItemStack 'spacea_cloud_machines:cloudenium_powder 1')
+            shard_break_particles(pointed_thing)
+            return itemstack
+        end
+        return itemstack
+    end,
+})
+
+s.meteorites.register_player_spawner(
+    vector.new(-1000, -1000, -1000),
+    vector.new(1000, 1000, 1000),
+    {
+        time = 60 * 8,
+        type = 'spacea_meteorites:cloud_meteorite',
+        distance = { min = 80, max = 120 },
+    }
+)
