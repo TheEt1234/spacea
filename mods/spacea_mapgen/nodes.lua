@@ -6,10 +6,6 @@ core.register_node('spacea_mapgen:cloud_piece', {
     sunlight_propagates = true,
     light_source = 2,
     paramtype = 'light',
-    collision_box = {
-        type = 'fixed',
-        fixed = { -0.5, -0.5, -0.5, 0.5, 0.2, 0.5 },
-    },
     groups = { slippery = 1, cloudy = 2 },
 
     use_texture_alpha = s.settings.cloud_transparency,
@@ -26,10 +22,6 @@ core.register_node('spacea_mapgen:cloud_piece_heavy', {
     sunlight_propagates = false,
     light_source = 0,
     paramtype = 'light',
-    collision_box = {
-        type = 'fixed',
-        fixed = { -0.5, -0.5, -0.5, 0.5, 0.2, 0.5 },
-    },
     groups = { falling_node = 1, float = 1, slippery = 0, cloudy = 4 },
 
     use_texture_alpha = s.settings.cloud_transparency,
@@ -44,10 +36,6 @@ core.register_node('spacea_mapgen:cloud_piece_light', {
     sunlight_propagates = true,
     light_source = 3,
     paramtype = 'light',
-    collision_box = {
-        type = 'fixed',
-        fixed = { -0.5, -0.5, -0.5, 0.5, 0.0, 0.5 },
-    },
     groups = { slippery = 0, falling_node = 1, float = 1, cloudy = 1 },
 
     _falling_node = {
@@ -102,10 +90,6 @@ core.register_node('spacea_mapgen:cloud_piece_glowy', {
     sunlight_propagates = true,
     light_source = 8,
     paramtype = 'light',
-    collision_box = {
-        type = 'fixed',
-        fixed = { -0.5, -0.5, -0.5, 0.5, 0.2, 0.5 },
-    },
     groups = { float = 1, slippery = 3, cloudy = 3 },
 
     use_texture_alpha = s.settings.cloud_transparency,

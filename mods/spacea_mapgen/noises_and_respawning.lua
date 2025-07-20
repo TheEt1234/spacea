@@ -72,9 +72,11 @@ function s.player.respawn_player(player_ref, attempts)
         node = s.get_or_load_node(pos).name
         local current_is_air = s.is_air(node)
 
-        if current_is_air ~= is_air then -- Basically, uhh, this will need a visual explanation
-            -- Try re-writing the code, you will get what i mean
+        if current_is_air ~= is_air then -- uhh this is scuffed
             pos.y = pos.y + 1
+            if not s.is_air(s.get_or_load_node(pos).name) then
+                break -- whoopsie gotta do again :/
+            end
             player_ref:set_pos(pos)
             return true
         end

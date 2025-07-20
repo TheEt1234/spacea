@@ -20,6 +20,7 @@ s.load_files {
     'misc.lua',
     'data_structures/init.lua',
     'node_related.lua',
+    'node_def_extensions.lua',
     'custom_falling.lua',
     'arm.lua',
     'settings.lua',
