@@ -23,21 +23,12 @@ s.meteorites.register_entity('spacea_meteorites', 'cloud_meteorite', {
         local place_chance = 0.75 -- 75%, makes it look not weird, i think this is important
         local cloudenium_chance = 0.25
         if meteorite_entity.attracted then
-            -- yeah i know i'm duplicating that piece of code from before... oh wait yeah right you the viewer can't tell what was "before"
             s.around_pos(pos, function(ipos)
-                local node = 'spacea_meteorites:meteoric_cloudenium'
-                if vector.equals(pos, ipos) then
-                    node = 'spacea_meteorites:meteoric_cloudenium_glowing'
-                else
-                    if math.random() > place_chance then return end
-                    if
-                        math.random() > cloudenium_chance
-                        and node == 'spacea_meteorites:meteoric_cloudenium'
-                    then
-                        node = 'spacea_meteorites:cloudstone'
-                    end
-                end
                 if not s.is_air(core.get_node(ipos).name) then return end
+
+                local node = 'spacea_meteorites:meteoric_cloudenium'
+                if math.random() > place_chance then return end
+                if math.random() > cloudenium_chance then node = 'spacea_meteorites:cloudstone' end
                 core.set_node(ipos, { name = node })
             end, { include_self = true, iterate_fully = true })
         else
@@ -208,15 +199,6 @@ core.register_node('spacea_meteorites:meteoric_cloudenium', {
         end
     end,
 })
-
---- cools down after all the meteoric cloudenium has been taken
-core.register_node('spacea_meteorites:meteoric_cloudenium_glowing', {
-    description = 'Glowing Meteoric Cloudenium',
-    groups = { cloudenium = 2 }, -- cannot break with fist
-    tiles = { 'spacea_meteorites_glowing_meteoric_cloudenium.png' },
-    light_source = 14,
-})
-
 local function shard_break_particles(pointed_thing)
     local pos = pointed_thing.under
     local face = vector.subtract(pointed_thing.above, pointed_thing.under)
@@ -281,6 +263,33 @@ core.register_node('spacea_meteorites:cloudstone', {
             return itemstack
         end
         return itemstack
+    end,
+    _on_cloudy_explode = function(pos, _, _, _)
+        local crack_chance = 0.01 -- low because the amount of rays that will be hitting these will be huge, i still think 1% is a bit too high, idk
+        if math.random() <= crack_chance then
+            core.after(
+                0, -- after a globalstep
+                function() -- yeah yeah what if tousand cloudstone gets exploded at once this will be laggy this is horrible yes i know i knoww
+                    if core.get_node(pos).name == 'spacea_meteorites:cloudstone' then -- it can change, we must check
+                        core.set_node(pos, { name = 'spacea_meteorites:cloudstone_shattered' })
+                    end
+                end
+            )
+        end
+        return 0
+    end,
+})
+
+core.register_node('spacea_meteorites:cloudstone_shattered', {
+    description = 'Shattered Cloud Stone',
+    groups = { stone = 2, sharp = 3 },
+    tiles = { 'spacea_meteorites_cloudstone_shattered.png' },
+    drop = 'spacea_cloud_machines:pebble 8',
+    _on_cloudy_explode = function(pos, _, delete_queue, drops)
+        if delete_queue[core.hash_node_position(pos)] then return 0 end
+        delete_queue[core.hash_node_position(pos)] = true
+        drops['spacea_cloud_machines:pebble'] = (drops['spacea_cloud_machines:pebble'] or 0) + 1
+        return 0
     end,
 })
 

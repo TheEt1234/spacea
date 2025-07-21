@@ -57,3 +57,9 @@ A powder form of cloudenium. You can place it in the world.
 To add more dust to the dust pile you placed, you can right click/place.
 
 When the player stands on it, they get levitated up.
+
+# Pebbles
+
+You can break down cloudstone with explosions into pebbles.
+
+Pebbles can be thrown if you want to.

@@ -151,6 +151,7 @@ local function explode(pointed_thing, puncher)
     local dir_shift = puncher_look * dir_shift_strength
     local spread = 3
 
+    ---@type table<poshash, boolean>
     local delete_queue = {}
 
     for _ = 1, num_rays do
@@ -162,7 +163,7 @@ local function explode(pointed_thing, puncher)
             local node = core.get_node(target_pointed.under)
 
             ---@class NodeDef
-            ---@field _on_cloudy_explode? fun(pos:vector, remaining_strength:number, delete_queue:vector[], drops: table<string, number>):number # Returns the remaining strength after, can be used to amplify a cloud explosion, mutate `delete_queue` and `drops` tables to do node deletion and drops
+            ---@field _on_cloudy_explode? fun(pos:vector, remaining_strength:number, delete_queue:table<poshash, boolean>, drops: table<string, number>):number # Returns the remaining strength after, can be used to amplify a cloud explosion, mutate `delete_queue` and `drops` tables to do node deletion and drops
 
             if core.registered_nodes[node.name]._on_cloudy_explode then
                 used_strength = strength
@@ -179,12 +180,14 @@ local function explode(pointed_thing, puncher)
                 if cloudness == 0 then break end
                 used_strength = used_strength + (1 / cloudness)
                 if used_strength > strength then break end
-                drops[node.name] = (drops[node.name] or 0) + 1
-                delete_queue[#delete_queue + 1] = target_pointed.under
+                if not delete_queue[core.hash_node_position(target_pointed.under)] then
+                    drops[node.name] = (drops[node.name] or 0) + 1
+                    delete_queue[core.hash_node_position(target_pointed.under)] = true
+                end
             end
         end
     end
-    s.foreach(delete_queue, core.remove_node)
+    s.foreachp(delete_queue, function(_, k) core.remove_node(core.get_position_from_hash(k)) end)
 
     -- we give it to the puncher, items on the ground is overrated :)
 

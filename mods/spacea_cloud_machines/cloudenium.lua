@@ -11,16 +11,6 @@ core.register_node('spacea_cloud_machines:cloudenium_block', {
     tiles = { 'spacea_cloud_machines_cloudenium_block.png' }, -- distinct border
 })
 
-core.register_node('spacea_cloud_machines:glowing_cloudenium_block', {
-    description = 'Glowing Cloudenium Block',
-    groups = { cloudenium = 1 }, -- No longer breakable by your fist, you have to do it by other means
-    tiles = { 'spacea_cloud_machines_cloudenium_block_glowing.png' }, -- distinct border
-
-    -- when attempting to break it, it will hurt, and will be impossible to break
-    -- it will cool down once there aren't any cloudenium nearby
-})
-
---- When not charged at all
 local default_groupcaps = {
     cloudy = { times = { 0.15, 0.35, 0.65, 0.75 } },
     sharp = { times = { 0.35, 0.55, 0.75, 1.25 }, maxlevel = 1 },
@@ -52,7 +42,8 @@ core.register_node('spacea_cloud_machines:cloudenium_powder', {
 
     -- as a node
     walkable = true,
-    collision_box = { type = 'fixed', fixed = { 0, 0, 0, 0, 0, 0 } }, -- hack to make falling node behavior less weird
+    collision_box = { type = 'fixed', fixed = { -0.5, -0.5, -0.5, -0.5, -0.5, -0.5 } }, -- hack to make falling node behavior less weird
+
     tiles = {
         'spacea_cloud_machines_cloudenium_powder_node_top.png',
         'spacea_cloud_machines_cloudenium_powder_node_top.png',
