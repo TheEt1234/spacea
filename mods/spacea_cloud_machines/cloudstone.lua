@@ -14,3 +14,6 @@ core.register_craftitem('spacea_cloud_machines:pebble', {
     groups = { cloudstone = 1 },
     inventory_image = 'spacea_cloud_machines_pebble.png',
 })
+
+--- hmm... now a tool
+--- What should it be... pebbles +

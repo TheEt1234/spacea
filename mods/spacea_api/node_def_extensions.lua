@@ -8,8 +8,10 @@ local old_get_drops = core.get_node_drops
 ---@field _on_custom_drops? fun(node:MapNode|string, toolname:string?, tool:ItemStack?, digger:ObjectRef?, pos: vector?):string[]
 ---@field _player_inside? fun(player:PlayerRef, pos:vector, node:MapNode, dtime:number):nil
 
+local _core = core --- SO lsp doesn't freak out
+
 ---@diagnostic disable-next-line: duplicate-set-field
-function core.get_node_drops(node, ...)
+function _core.get_node_drops(node, ...)
     local reg
     if type(node) == 'string' then
         reg = core.registered_nodes[node]

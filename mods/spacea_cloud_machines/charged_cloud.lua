@@ -130,11 +130,11 @@ end
 --- It isn't optimized at all, doesn't take into account custom node drops, just...
 --- If you are making general explosion code START FROM SCRATCH INSTEAD OF THIS
 ---
---- Thank you
 --- - frog
----@param puncher PlayerRef
-local function explode(pointed_thing, puncher)
-    local puncher_name = puncher:get_player_name()
+---@param puncher PlayerRef|boolean
+local function explode(pointed_thing, puncher, look_dir)
+    look_dir = look_dir or puncher:get_look_dir()
+    local puncher_name = puncher and puncher:get_player_name() or ''
     local pos = pointed_thing.under
     core.remove_node(pos)
     local strength = 16
@@ -146,9 +146,8 @@ local function explode(pointed_thing, puncher)
     local num_rays = 100 -- overkill perhaps?
     local drops = {}
 
-    local puncher_look = puncher:get_look_dir()
     local dir_shift_strength = 12 -- strength of the player's fist, should not overpower `radius`
-    local dir_shift = puncher_look * dir_shift_strength
+    local dir_shift = look_dir * dir_shift_strength
     local spread = 3
 
     ---@type table<poshash, boolean>
@@ -191,12 +190,19 @@ local function explode(pointed_thing, puncher)
 
     -- we give it to the puncher, items on the ground is overrated :)
 
-    for drop, count in pairs(drops) do
-        local leftover = puncher
-            :get_inventory()
-            :add_item(puncher:get_wield_list(), ItemStack(drop .. ' ' .. count))
+    if puncher then
+        for drop, count in pairs(drops) do
+            local leftover = puncher
+                :get_inventory()
+                :add_item(puncher:get_wield_list(), ItemStack(drop .. ' ' .. count))
 
-        core.add_item(pointed_thing.under, leftover)
+            core.add_item(pointed_thing.under, leftover)
+        end
+    else
+        --- but if there isn't one then uhh... bit of an issue
+        for drop, count in pairs(drops) do
+            core.add_item(pointed_thing.under, ItemStack(drop .. ' ' .. count))
+        end
     end
 
     -- then oOO particles
@@ -206,7 +212,7 @@ local function explode(pointed_thing, puncher)
         amount = 1,
         time = 0.5,
         pos = pointed_thing.above,
-        vel = (puncher:get_look_dir() or vector.zero()) * 40,
+        vel = look_dir * 40,
         exptime = 0.6,
         collision_removal = true,
         collisiondetection = true,
@@ -308,6 +314,23 @@ for i = 1, 3 do
             else
                 trans_sparks(pos, pointed_thing, 4, true)
                 explode(pointed_thing, puncher)
+            end
+        end,
+        _on_cloudy_charge = function(pos, charge, vel)
+            local current_charge_level = i
+            local future_charge_level = math.min(4, current_charge_level + charge)
+            if future_charge_level == 4 then
+                -- explode
+                local pointed_thing = { above = pos, under = pos }
+                pointed_thing.above = pointed_thing.above - vel
+                explode(pointed_thing, false, vel)
+            else
+                -- charge up, without particles
+                core.set_node(
+                    pos,
+                    { name = 'spacea_cloud_machines:charged_cloud_' .. future_charge_level }
+                )
+                core.get_node_timer(pos):start(60) -- lore reason: Its less durable.. or something, definitely not because i was lazy while coding this
             end
         end,
     })

@@ -7,3 +7,6 @@
 [submodule "dev/lsp_definitions/luanti"]
 	path = dev/lsp_definitions/luanti
 	url = git@github.com:TheEt1234/luanti_lsp_definitions.git
+[submodule "mods/node_object"]
+	path = mods/node_object
+	url = https://github.com/TurkeyMcMac/node_object

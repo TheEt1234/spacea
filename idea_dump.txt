@@ -1,0 +1,39 @@
+- to exit cloudlands, create a portal (no rockets)
+- portal on the side of cloudlands would use cloud charges
+- on the side of new stuff, would use new stuff's power
+- portals would be easy to create once, but extremely difficult to mass produce, and could only link from cloudlands to new stuff realm
+- after the player exited the cloudlands, they can still re-visit them with their portal
+- a return portal would be made automatically
+
+- some way to transmit charges between charged clouds
+- ... that would also be turing-complete like redstone
+- would need a charge source
+- maybe some sort of charge collector which would collect charge from air, but explode when it gets too much charge
+- if the charges hit something while transmitting, they would have an _on_cloudy_explode effect, with a fake player
+    - fake player's name is "", and inventory gets dropped at pos
+    - or it won't need a fake player if i haven't provided one to _on_cloudy_explode
+    - if the charges hit a regular cloud piece, it will turn into a charged one
+- oh and also entity based, it would be a temporary entity
+- oh and also some way to make sound here, yes
+- and artificial charged cloud piece which would not explode, and act sort of as both a lamp and a binary charged cloud
+    - it would be made with pebbles and cloudenium
+
+also: I am starting to regret having cloudlands being themed around charge, because while very cool, all i can think of is transportation and explosions
+it would be really nice having like, in sbz: plants
+but no that wouldn't fit
+
+so uhh... how about machines? Nope...
+
+ok... screw cloudlands! how would the portal be made and how would you be able to activate it
+- maybe it could require 200 cloud charges, taking a WHILE to charge up, while you are encouraged to pack things up, sure
+- portals require a lot of charge (see above), so to make them you would uhh... i guess make a frame to stabilize them? idk
+
+
+
+- cloudlands should be something like half a hour for a beginner or something like that, can be less, can be more, just somewhere in that range
+- cloudlands shouldn't be a chore, they should be new and exciting, and not hard
+- there should be multiple strategies you can take to exit the cloudlands, so that in repeated playthroughs it wouldn't be boring
+
+Schizo ideas:
+- NEON CLOUDS OMG I WOULD LOVE IT OMG OMG OMGO MGOM OWOOO WOOO
+IMAGINE, an entire land, having like neon aestethics

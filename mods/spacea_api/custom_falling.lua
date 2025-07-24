@@ -1,10 +1,16 @@
 -- BEHAVIOR DEFINED IN FIELD _falling_node
 --
----@class custom.node_defs._falling_node
----@field gravity vector.Vector?
+---@class NodeDef._falling_node
+---@field gravity vector?
+
+---@class NodeDef
+---@field _falling_node? NodeDef._falling_node
 
 local old_spawn_falling_node = core.spawn_falling_node
-function core.spawn_falling_node(pos)
+
+local _core = core -- for luals to ignore
+
+function _core.spawn_falling_node(pos)
     local node = core.get_node(pos)
 
     local success, object = old_spawn_falling_node(pos)
@@ -21,6 +27,7 @@ end
 
 local captured_object = nil
 local add_entity = core.add_entity
+
 local capture_object = function(...)
     local object = add_entity(...)
     captured_object = object
@@ -28,11 +35,12 @@ local capture_object = function(...)
 end
 
 local old_check_single_for_falling = core.check_single_for_falling
-function core.check_single_for_falling(p)
+
+function _core.check_single_for_falling(p)
     local node = core.get_node(p)
-    core.add_entity = capture_object
+    _core.add_entity = capture_object
     local success = old_check_single_for_falling(p)
-    core.add_entity = add_entity
+    _core.add_entity = add_entity
 
     if not success or not captured_object then return success end
 

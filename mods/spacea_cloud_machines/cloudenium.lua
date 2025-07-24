@@ -5,11 +5,46 @@
 --- Anyway, i want cloudenium to have some VERY strange properties once out of a meteorite formation (i.e. like 2 nodes away from a glowing cloudenium block, that one "stabilises" the cloudenium i guess)
 --- And you can get directed strange properties when you refine it
 
-core.register_node('spacea_cloud_machines:cloudenium_block', {
-    description = 'Cloudenium Block',
-    groups = { cloudenium = 1 }, -- No longer breakable by your fist, you have to do it by other means
-    tiles = { 'spacea_cloud_machines_cloudenium_block.png' }, -- distinct border
-})
+--- for cloudenium blocks
+for i = 0, 8 do
+    core.register_node('spacea_cloud_machines:cloudenium_block_' .. i, {
+        description = 'Cloudenium Block' .. (i ~= 0 and (' (charge=%s)'):format(i) or ''),
+        groups = { cloudenium = 1, cloudenium_block = 1 }, -- No longer breakable by your fist, you have to do it by other means
+        tiles = { ('spacea_cloud_machines_cloudenium_block_%s.png'):format(i) }, -- distinct border
+        light_source = math.min(core.LIGHT_MAX, 1 + math.round(i * 1.8)),
+        drop = 'spacea_cloud_machines:cloudenium_block_0',
+        _on_cloudy_explode = function(pos, _, _, _)
+            if i ~= 8 then --  HACK:
+                core.after(0, function()
+                    if
+                        core.get_node(pos).name
+                        ~= 'spacea_cloud_machines:cloudenium_block_' .. i
+                    then
+                        return
+                    end
+
+                    core.set_node(
+                        pos,
+                        { name = 'spacea_cloud_machines:cloudenium_block_' .. i + 1 }
+                    )
+                end)
+            end
+            return 0
+        end,
+        _on_cloudy_charge = function(pos, charge, _)
+            local charge_to = math.min(8, i + charge)
+            core.set_node(pos, { name = 'spacea_cloud_machines:cloudenium_block_' .. charge_to })
+        end,
+        _cloudy_get_charge = function(_) return i end,
+        _cloudy_set_charge = function(pos, charge)
+            core.set_node(pos, { name = 'spacea_cloud_machines:cloudenium_block_' .. charge })
+        end,
+    })
+end
+core.register_alias(
+    'spacea_cloud_machines:cloudenium_block',
+    'spacea_cloud_machines:cloudenium_block_0'
+)
 
 local default_groupcaps = {
     cloudy = { times = { 0.15, 0.35, 0.65, 0.75 } },
@@ -36,7 +71,7 @@ core.register_craftitem('spacea_cloud_machines:cloudenium_shard', {
 core.register_node('spacea_cloud_machines:cloudenium_powder', {
     --  as an item
     description = 'Cloudenium Powder',
-    groups = { cloudenium = 1, powder = 1, falling_node = 1, float = 1 },
+    groups = { cloudenium = 1, powder = 1, falling_node = 1, float = 1, dig_immediate = 2 },
     inventory_image = 'spacea_cloud_machines_cloudenium_powder.png',
     wield_image = 'spacea_cloud_machines_cloudenium_powder.png',
 

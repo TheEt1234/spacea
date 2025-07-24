@@ -9,3 +9,11 @@ function s.get_or_load_node(pos)
 end
 
 function s.is_air(name) return name == 'air' or name == 'ignore' end
+
+function s.drop_node(pos)
+    local drops = core.get_node_drops(core.get_node(pos), nil, nil, nil, pos)
+    for _, item in pairs(drops) do
+        core.add_item(pos, ItemStack(item))
+    end
+    core.remove_node(pos)
+end
