@@ -1,0 +1,1 @@
+Make on_right_click stuff call item's on_place

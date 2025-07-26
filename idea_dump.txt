@@ -1,7 +1,5 @@
-- to exit cloudlands, create a portal (no rockets)
-- portal on the side of cloudlands would use cloud charges
+- to exit cloudlands, create a portal (no rockets), like minecraft
 - on the side of new stuff, would use new stuff's power
-- portals would be easy to create once, but extremely difficult to mass produce, and could only link from cloudlands to new stuff realm
 - after the player exited the cloudlands, they can still re-visit them with their portal
 - a return portal would be made automatically
 
@@ -9,31 +7,63 @@
 - ... that would also be turing-complete like redstone
 - would need a charge source
 - maybe some sort of charge collector which would collect charge from air, but explode when it gets too much charge
-- if the charges hit something while transmitting, they would have an _on_cloudy_explode effect, with a fake player
-    - fake player's name is "", and inventory gets dropped at pos
-    - or it won't need a fake player if i haven't provided one to _on_cloudy_explode
-    - if the charges hit a regular cloud piece, it will turn into a charged one
-- oh and also entity based, it would be a temporary entity
-- oh and also some way to make sound here, yes
+- oh and also some way to make sound here, yes, a note block that accepts charge
 - and artificial charged cloud piece which would not explode, and act sort of as both a lamp and a binary charged cloud
     - it would be made with pebbles and cloudenium
 
-also: I am starting to regret having cloudlands being themed around charge, because while very cool, all i can think of is transportation and explosions
-it would be really nice having like, in sbz: plants
-but no that wouldn't fit
-
-so uhh... how about machines? Nope...
-
-ok... screw cloudlands! how would the portal be made and how would you be able to activate it
-- maybe it could require 200 cloud charges, taking a WHILE to charge up, while you are encouraged to pack things up, sure
-- portals require a lot of charge (see above), so to make them you would uhh... i guess make a frame to stabilize them? idk
-
-
+What wouldn't fit in cloudlands
+- complex machines
 
 - cloudlands should be something like half a hour for a beginner or something like that, can be less, can be more, just somewhere in that range
 - cloudlands shouldn't be a chore, they should be new and exciting, and not hard
+- there should be a reason to return to cloudlands
 - there should be multiple strategies you can take to exit the cloudlands, so that in repeated playthroughs it wouldn't be boring
 
 Schizo ideas:
 - NEON CLOUDS OMG I WOULD LOVE IT OMG OMG OMGO MGOM OWOOO WOOO
-IMAGINE, an entire land, having like neon aestethics
+IMAGINE, an entire land, having like neon aestethics, idk
+
+hmm... what about.. ALTERNATIVE charge types and their interaction with eachother
+- maybe neon charge, which would turn things neon, and can easily convert large sections of cloudlands, can only be transfered in very large amounts... with large environmental concequences
+    - in a way you could say it makes something <windings>VERY VERY INTERE</windings>- NO.
+- cloud charge would have a habit of exploding things, and being the base charge, every charge being a derivative of it, and the easiest charge to transfer
+
+and yeah 2 is enough.
+
+- interactions between them would be interesting, but they would also have their own dedicated tech
+
+also, maybe there could be worlds based on these charges, equally beatable as cloudlands
+
+--------------------
+ok so.. i think the THEME of cloudlands is boring
+why not just... not have one
+why should i disallow myself from adding plants yes
+
+yeah great
+
+
+so what will be the plan... will cloud charges be like a power unit, or something like redstone that can be created infinitely at will
+
+i think... they should be both maybe
+it would probably be crap...
+
+so sure, it could be like redstone
+
+now for the actual power unit...
+uhh idk
+
+what could be the introduction to it?...
+i dont knowww
+
+Ok, what if there just wasn't a power unit
+yeah, cloudlands doesn't need that
+
+
+Ok, what if there just wasn't a power unit
+yeah, cloudlands doesn't need that
+
+but then what
+
+what should be in cloudlands
+
+aaaaaaaaaaa

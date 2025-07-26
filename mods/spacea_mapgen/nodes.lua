@@ -2,14 +2,14 @@ local invcube3 = function(img) return core.inventorycube(img, img, img) end
 core.register_node('spacea_mapgen:cloud_piece', {
     description = 'Cloud Piece',
     walkable = true,
-    drawtype = 'normal',
-    sunlight_propagates = true,
+    drawtype = 'glasslike',
+    sunlight_propagates = false,
     light_source = 2,
-    paramtype = 'light',
+    paramtype = 'none',
     groups = { slippery = 1, cloudy = 2 },
 
     use_texture_alpha = s.settings.cloud_transparency,
-    tiles = { 'spacea_mapgen_cloud_piece.png' },
+    tiles = { 'spacea_mapgen_cloud_piece.png^[opacity:250' },
     inventory_image = invcube3 'spacea_mapgen_cloud_piece_inv.png',
 })
 
@@ -18,10 +18,10 @@ core.register_node('spacea_mapgen:cloud_piece', {
 core.register_node('spacea_mapgen:cloud_piece_heavy', {
     description = 'Heavy Cloud Piece',
     walkable = true,
-    drawtype = 'liquid',
+    drawtype = 'glasslike',
     sunlight_propagates = false,
     light_source = 0,
-    paramtype = 'light',
+    paramtype = 'none',
     groups = { falling_node = 1, float = 1, slippery = 0, cloudy = 4 },
 
     use_texture_alpha = s.settings.cloud_transparency,
@@ -32,7 +32,7 @@ core.register_node('spacea_mapgen:cloud_piece_heavy', {
 core.register_node('spacea_mapgen:cloud_piece_light', {
     description = 'Light Cloud Piece', -- Has strange properties, definitely not bugs i swear :)
     walkable = true,
-    drawtype = 'liquid',
+    drawtype = 'glasslike',
     sunlight_propagates = true,
     light_source = 3,
     paramtype = 'light',
@@ -86,7 +86,7 @@ core.register_node('spacea_mapgen:cloud_piece_light', {
 core.register_node('spacea_mapgen:cloud_piece_glowy', {
     description = 'Glowy Cloud Piece',
     walkable = true,
-    drawtype = 'normal',
+    drawtype = 'glasslike',
     sunlight_propagates = true,
     light_source = 8,
     paramtype = 'light',
